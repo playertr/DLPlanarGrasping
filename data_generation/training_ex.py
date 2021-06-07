@@ -8,6 +8,7 @@ Tim Player playertr@oregonstate.edu June 1, 2021
 import numpy as np
 from . import params
 from shapely.geometry import LineString, MultiLineString, Point
+from .grasp_quality import shape_grasp_quality
 
 class TrainingExample:
     def __init__(self, robx, roby, shape):
@@ -26,9 +27,9 @@ class TrainingExample:
         self.scan_pts = glob_to_loc(pts, self.robang, self.robx, self.roby)
 
     def scan(self,
-    n_points=params.Robot.N_SCAN_POINTS,
-    s_range=params.Robot.SCAN_RANGE,
-    eps=params.Robot.FOV_REDUCTION_MARGIN):
+    n_points=params.TrainingExample.N_SCAN_POINTS,
+    s_range=params.TrainingExample.SCAN_RANGE,
+    eps=params.TrainingExample.FOV_REDUCTION_MARGIN):
         """Cast N_SCAN_POINTS evenly-spaced rays, but they ALL land on the shape.
         """
         # Identify shape boundary
@@ -58,6 +59,9 @@ class TrainingExample:
 
     def sdf(self, x):
         return local_sdf(self.shape, x, self.robang, self.robx, self.roby)
+
+    def grasp_quality(self, theta, b):
+        return shape_grasp_quality(self.shape, theta, b, mu=params.TrainingExample.FRICTION_COEFFICIENT)
 
 def vis_bounds(robx, roby, shape):
     """Find angle range at which the shape is visible to a location.
@@ -152,9 +156,9 @@ def angle_equal(a1, a2, eps=0.001):
 
 ############# DEPRECATED ######################################################
     # def wide_scan(self, shape, 
-    #     n_points=params.Robot.N_SCAN_POINTS,
-    #     half_angle=params.Robot.SCAN_HALF_ANGLE,
-    #     s_range=params.Robot.SCAN_RANGE):
+    #     n_points=params.TrainingExample.N_SCAN_POINTS,
+    #     half_angle=params.TrainingExample.SCAN_HALF_ANGLE,
+    #     s_range=params.TrainingExample.SCAN_RANGE):
     #     """Cast N_SCAN_POINTS evenly-spaced rays out from the robot at a fixed fan angle. Rays that miss are given (nan, nan).
     #     """
 
