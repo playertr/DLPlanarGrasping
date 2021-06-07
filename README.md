@@ -13,6 +13,18 @@ scipy
 shapely
 ```
 
+### Building `pygel3d`
+Follow the instructions at [https://github.com/janba/GEL](https://github.com/janba/GEL) to build GEL and compile your own pip wheel. **The pip wheel on PyPi doesn't work for Linux.** 
+
+The correct incantation, after cloning the repo, is 
+```
+mkdir build; cd build; cmake ..; make -j 8 ; cd ..
+python setup.py bdist_wheel
+pip install dist/PyGEL3D-*.whl
+```
+
+Don't mess with the auto-install scripts from `GEL_UNIX/`. They're outdated, and they've since moved to cmake. 
+
 ## Usage
 If you need to generate new data, use, e.g., 
 ```
