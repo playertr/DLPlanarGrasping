@@ -14,15 +14,12 @@ class Net(nn.Module):
             params: (Params) contains num_channels
         """
         super(Net, self).__init__()
-        self.num_channels = params.num_channels
-        
-        self.conv1 = nn.Conv1d(500, self.num_channels, 3, stride=1, padding=1)
-        self.conv2 = nn.Conv1d(self.num_channels, self.num_channels*2, 3, stride=1, padding=1)
 
-
+        # Input has shape (101, 2)
         # 2 fully connected layers to transform the output of the convolution layers to the final output
-        self.fc1 = nn.Linear(self.num_channels*2, self.num_channels*50)
-        self.fc2 = nn.Linear(self.num_channels*50, 100)
+        self.fc1 = nn.Linear(202, 600)
+        self.fc2 = nn.Linear(600, 100)
+        self.fc3 = nn.Linear(100, 1)
         self.dropout_rate = params.dropout_rate
 
     def forward(self, s):
@@ -37,15 +34,12 @@ class Net(nn.Module):
 
         Note: the dimensions after each step are provided
         """
-        s = self.conv1(s) 
-        s = F.relu(F.max_pool1d(s, 2))
-        s = self.conv2(s)
-        s = F.relu(s)
-
-        s = s.squeeze()
+        s = s.view(-1, 202)
         # apply 2 fully connected layers with dropout
         s = F.relu(self.fc1(s))
         s = F.relu(self.fc2(s))
+        s = F.relu(self.fc3(s))
+        s = s.squeeze()
         return s
 
 # We are able to define arbitrary metrics for our models, beyond L2 loss, and
