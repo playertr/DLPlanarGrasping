@@ -73,6 +73,7 @@ examples = list(itertools.chain(*examples))
 # robang        : the angle from the robot to the center of the visible region of the shape
 # scan_pts      : an (N_SCAN_POINTS,2) ndarray of coordinates corresponding to the local-frame cartesian locations obtained by casting rays from the robot to the shape. The rays span the entire visible portion of the shape.
 # sdf(x)        : a vectorized function converting an ndarray of coordinates (x,y) expressed in the robot local frame, to distance from the object. This function is used to evaluate the ground truth SDF.
+# grasp_quality(theta, b) : a function giving the quality of a grasp with angle theta and offset b, on the object's `shape` attribute.
 
 ## Write training data
 print("Pickling training examples.")
