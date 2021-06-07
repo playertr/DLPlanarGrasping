@@ -6,11 +6,12 @@ Tim Player playertr@oregonstate.edu June 1, 2021
 """
 from math import pi
 
-class Robot:
+class TrainingExample:
     N_SCAN_POINTS = int(100)
     SCAN_HALF_ANGLE = 30 * pi/180 # radians
     SCAN_RANGE = 99999
     FOV_REDUCTION_MARGIN = 0.0001 # radians
+    FRICTION_COEFFICIENT = 0.3
 
 class DataGen:
     N_POLYGONS = 5*int(1e3)        # number of different shapes
