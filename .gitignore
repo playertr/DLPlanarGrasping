@@ -6,4 +6,4 @@ __pycache__/
 *.tar
 *.jpg
 *.zip
-old/
+notebooks/scratchwork/figs
