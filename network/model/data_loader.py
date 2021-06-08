@@ -3,6 +3,8 @@ import pickle
 import numpy as np
 
 from torch.utils.data import Dataset, DataLoader
+import sys
+sys.path.insert(0, '/home/tim/Classes/CS535/PlanarGrasping/')
 
 class SDFDataset(Dataset):
     """
@@ -54,12 +56,13 @@ class SDFDataset(Dataset):
         shape_idx = int(idx / self.sdf_queries_per_shape)
         pt_idx = idx % self.sdf_queries_per_shape
 
-        scan_pts, query_pts, dists = self.examples[shape_idx] # See description above.
+        scan_pts, query_pts, dists, *_ = self.examples[shape_idx] # See description above.
         query_pt = query_pts[pt_idx]
         dist = dists[pt_idx]
         # We want:
-        # INPUT: (500,3) concatenation of Xtrain, ytrain for this shape
-        # OUTPUT: (100,) ndarray of SDF zero points
+        # INPUT: (101, 2) array of points in the local frame
+        # The first 100 are the scan, the last point is the query point
+        # OUTPUT: (1,) ndarray of SDF value
 
         data = np.vstack([
             scan_pts, query_pt
