@@ -17,10 +17,19 @@ class Net(nn.Module):
 
         # Input has shape (101, 2)
         # 2 fully connected layers to transform the output of the convolution layers to the final output
-        self.fc1 = nn.Linear(202, 600)
-        self.fc2 = nn.Linear(600, 100)
-        self.fc3 = nn.Linear(100, 1)
+        self.fc1 = nn.Linear(202, 512)
+        self.fc2 = nn.Linear(512, 256)
+        self.fc3 = nn.Linear(256, 512)
+        self.batch_norm1 = nn.BatchNorm1d(512)
+        self.fc4 = nn.Linear(512, 512)
+        self.batch_norm2 = nn.BatchNorm1d(512)
+        self.fc5 = nn.Linear(512, 256)
+        self.batch_norm3 = nn.BatchNorm1d(256)
+        self.fc6 = nn.Linear(256, 128)
+        self.batch_norm4 = nn.BatchNorm1d(128)
+        self.fc7 = nn.Linear(128, 1)
         self.dropout_rate = params.dropout_rate
+        self.dropout_layer = nn.Dropout2d(p=self.dropout_rate)
 
     def forward(self, s):
         """
@@ -35,10 +44,23 @@ class Net(nn.Module):
         Note: the dimensions after each step are provided
         """
         s = s.view(-1, 202)
-        # apply 2 fully connected layers with dropout
         s = F.relu(self.fc1(s))
         s = F.relu(self.fc2(s))
+        s = self.dropout_layer(s)
+        residual = s
         s = F.relu(self.fc3(s))
+        s = self.batch_norm1(s)
+        s = F.relu(self.fc4(s))
+        s = self.batch_norm2(s)
+        s = F.relu(self.fc5(s))
+        s = self.batch_norm3(s)
+        s += residual
+        s = F.relu(self.fc6(s))
+        s = self.batch_norm4(s)
+        s = self.fc7(s)
+        # s = F.relu(self.fc1(s))
+        # s = F.relu(self.fc2(s))
+        # s = F.relu(self.fc3(s))
         s = s.squeeze()
         return s
 
