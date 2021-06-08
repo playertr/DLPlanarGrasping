@@ -4125,3 +4125,286 @@
 2021-06-08 06:24:04,488:INFO: - Eval metrics : loss: 6.930
 2021-06-08 06:24:04,533:INFO: - Found new best MSE loss
 2021-06-08 06:24:04,533:INFO: Epoch 3/100
+2021-06-08 06:32:44,868:INFO: Loading the datasets...
+2021-06-08 06:32:44,937:INFO: - done.
+2021-06-08 06:32:46,432:INFO: Starting training for 25 epoch(s)
+2021-06-08 06:32:46,433:INFO: Epoch 1/25
+2021-06-08 06:33:27,446:INFO: - Train metrics: loss: 0.419
+2021-06-08 06:33:30,086:INFO: - Eval metrics : loss: 1.134
+2021-06-08 06:33:30,128:INFO: - Found new best MSE loss
+2021-06-08 06:33:30,128:INFO: Epoch 2/25
+2021-06-08 06:34:14,789:INFO: - Train metrics: loss: 0.115
+2021-06-08 06:34:18,292:INFO: - Eval metrics : loss: 1.330
+2021-06-08 06:34:18,312:INFO: Epoch 3/25
+2021-06-08 06:35:01,512:INFO: - Train metrics: loss: 0.104
+2021-06-08 06:35:04,577:INFO: - Eval metrics : loss: 1.222
+2021-06-08 06:35:04,605:INFO: Epoch 4/25
+2021-06-08 06:35:56,045:INFO: Loading the datasets...
+2021-06-08 06:35:56,115:INFO: - done.
+2021-06-08 06:35:57,599:INFO: Starting training for 25 epoch(s)
+2021-06-08 06:35:57,600:INFO: Epoch 1/25
+2021-06-08 06:36:39,488:INFO: - Train metrics: loss: 0.419
+2021-06-08 06:36:42,479:INFO: - Eval metrics : loss: 1.134
+2021-06-08 06:36:42,527:INFO: - Found new best MSE loss
+2021-06-08 06:36:42,528:INFO: Epoch 2/25
+2021-06-08 06:37:29,082:INFO: - Train metrics: loss: 0.115
+2021-06-08 06:37:31,985:INFO: - Eval metrics : loss: 1.330
+2021-06-08 06:37:32,007:INFO: Epoch 3/25
+2021-06-08 06:38:14,419:INFO: - Train metrics: loss: 0.104
+2021-06-08 06:38:17,229:INFO: - Eval metrics : loss: 1.222
+2021-06-08 06:38:17,257:INFO: Epoch 4/25
+2021-06-08 06:39:00,091:INFO: - Train metrics: loss: 0.091
+2021-06-08 06:39:03,010:INFO: - Eval metrics : loss: 0.943
+2021-06-08 06:39:03,042:INFO: - Found new best MSE loss
+2021-06-08 06:39:03,043:INFO: Epoch 5/25
+2021-06-08 06:39:46,509:INFO: - Train metrics: loss: 0.081
+2021-06-08 06:39:49,477:INFO: - Eval metrics : loss: 0.888
+2021-06-08 06:39:49,517:INFO: - Found new best MSE loss
+2021-06-08 06:39:49,518:INFO: Epoch 6/25
+2021-06-08 06:40:33,772:INFO: - Train metrics: loss: 0.079
+2021-06-08 06:40:36,567:INFO: - Eval metrics : loss: 0.805
+2021-06-08 06:40:36,609:INFO: - Found new best MSE loss
+2021-06-08 06:40:36,610:INFO: Epoch 7/25
+2021-06-08 06:41:19,866:INFO: - Train metrics: loss: 0.075
+2021-06-08 06:41:22,695:INFO: - Eval metrics : loss: 0.918
+2021-06-08 06:41:22,723:INFO: Epoch 8/25
+2021-06-08 06:42:05,728:INFO: - Train metrics: loss: 0.072
+2021-06-08 06:42:08,624:INFO: - Eval metrics : loss: 0.898
+2021-06-08 06:42:08,647:INFO: Epoch 9/25
+2021-06-08 06:42:51,051:INFO: - Train metrics: loss: 0.068
+2021-06-08 06:42:54,009:INFO: - Eval metrics : loss: 1.017
+2021-06-08 06:42:54,029:INFO: Epoch 10/25
+2021-06-08 06:43:37,515:INFO: - Train metrics: loss: 0.065
+2021-06-08 06:43:40,291:INFO: - Eval metrics : loss: 0.859
+2021-06-08 06:43:40,319:INFO: Epoch 11/25
+2021-06-08 06:44:22,214:INFO: - Train metrics: loss: 0.066
+2021-06-08 06:44:25,077:INFO: - Eval metrics : loss: 0.979
+2021-06-08 06:44:25,106:INFO: Epoch 12/25
+2021-06-08 06:45:09,624:INFO: - Train metrics: loss: 0.063
+2021-06-08 06:45:12,640:INFO: - Eval metrics : loss: 0.879
+2021-06-08 06:45:12,668:INFO: Epoch 13/25
+2021-06-08 06:45:54,856:INFO: - Train metrics: loss: 0.064
+2021-06-08 06:45:57,661:INFO: - Eval metrics : loss: 1.027
+2021-06-08 06:45:57,692:INFO: Epoch 14/25
+2021-06-08 06:46:42,427:INFO: - Train metrics: loss: 0.062
+2021-06-08 06:46:45,277:INFO: - Eval metrics : loss: 0.788
+2021-06-08 06:46:45,317:INFO: - Found new best MSE loss
+2021-06-08 06:46:45,318:INFO: Epoch 15/25
+2021-06-08 06:47:28,986:INFO: - Train metrics: loss: 0.060
+2021-06-08 06:47:31,871:INFO: - Eval metrics : loss: 1.011
+2021-06-08 06:47:31,892:INFO: Epoch 16/25
+2021-06-08 06:48:15,642:INFO: - Train metrics: loss: 0.061
+2021-06-08 06:48:18,530:INFO: - Eval metrics : loss: 0.921
+2021-06-08 06:48:18,558:INFO: Epoch 17/25
+2021-06-08 06:49:02,248:INFO: - Train metrics: loss: 0.058
+2021-06-08 06:49:05,095:INFO: - Eval metrics : loss: 0.941
+2021-06-08 06:49:05,124:INFO: Epoch 18/25
+2021-06-08 06:49:49,691:INFO: - Train metrics: loss: 0.057
+2021-06-08 06:49:52,646:INFO: - Eval metrics : loss: 0.871
+2021-06-08 06:49:52,669:INFO: Epoch 19/25
+2021-06-08 06:50:37,443:INFO: - Train metrics: loss: 0.055
+2021-06-08 06:50:40,223:INFO: - Eval metrics : loss: 1.053
+2021-06-08 06:50:40,253:INFO: Epoch 20/25
+2021-06-08 06:51:22,690:INFO: - Train metrics: loss: 0.056
+2021-06-08 06:51:25,510:INFO: - Eval metrics : loss: 0.870
+2021-06-08 06:51:25,539:INFO: Epoch 21/25
+2021-06-08 06:52:07,101:INFO: - Train metrics: loss: 0.057
+2021-06-08 06:52:09,923:INFO: - Eval metrics : loss: 0.903
+2021-06-08 06:52:09,956:INFO: Epoch 22/25
+2021-06-08 06:52:52,475:INFO: - Train metrics: loss: 0.058
+2021-06-08 06:52:55,350:INFO: - Eval metrics : loss: 0.958
+2021-06-08 06:52:55,379:INFO: Epoch 23/25
+2021-06-08 06:53:38,691:INFO: - Train metrics: loss: 0.054
+2021-06-08 06:53:41,440:INFO: - Eval metrics : loss: 1.005
+2021-06-08 06:53:41,468:INFO: Epoch 24/25
+2021-06-08 06:54:24,344:INFO: - Train metrics: loss: 0.053
+2021-06-08 06:54:27,491:INFO: - Eval metrics : loss: 1.013
+2021-06-08 06:54:27,511:INFO: Epoch 25/25
+2021-06-08 06:55:10,659:INFO: - Train metrics: loss: 0.054
+2021-06-08 06:55:13,537:INFO: - Eval metrics : loss: 0.961
+2021-06-08 07:07:45,868:INFO: Loading the datasets...
+2021-06-08 07:07:45,940:INFO: - done.
+2021-06-08 07:07:47,499:INFO: Starting training for 25 epoch(s)
+2021-06-08 07:07:47,500:INFO: Epoch 1/25
+2021-06-08 07:08:34,157:INFO: - Train metrics: loss: 0.460
+2021-06-08 07:08:37,237:INFO: - Eval metrics : loss: 0.674
+2021-06-08 07:08:37,276:INFO: - Found new best MSE loss
+2021-06-08 07:08:37,277:INFO: Epoch 2/25
+2021-06-08 07:09:28,507:INFO: - Train metrics: loss: 0.107
+2021-06-08 07:09:31,942:INFO: - Eval metrics : loss: 0.270
+2021-06-08 07:09:31,979:INFO: - Found new best MSE loss
+2021-06-08 07:09:31,979:INFO: Epoch 3/25
+2021-06-08 07:10:25,133:INFO: - Train metrics: loss: 0.098
+2021-06-08 07:10:28,358:INFO: - Eval metrics : loss: 3.761
+2021-06-08 07:10:28,394:INFO: Epoch 4/25
+2021-06-08 07:11:22,293:INFO: - Train metrics: loss: 0.087
+2021-06-08 07:11:25,520:INFO: - Eval metrics : loss: 0.133
+2021-06-08 07:11:25,563:INFO: - Found new best MSE loss
+2021-06-08 07:11:25,564:INFO: Epoch 5/25
+2021-06-08 07:12:13,658:INFO: - Train metrics: loss: 0.085
+2021-06-08 07:12:16,621:INFO: - Eval metrics : loss: 0.130
+2021-06-08 07:12:16,662:INFO: - Found new best MSE loss
+2021-06-08 07:12:16,663:INFO: Epoch 6/25
+2021-06-08 07:13:01,918:INFO: - Train metrics: loss: 0.076
+2021-06-08 07:13:05,002:INFO: - Eval metrics : loss: 0.142
+2021-06-08 07:13:05,032:INFO: Epoch 7/25
+2021-06-08 07:13:55,370:INFO: - Train metrics: loss: 0.069
+2021-06-08 07:13:58,504:INFO: - Eval metrics : loss: 551.909
+2021-06-08 07:13:58,542:INFO: Epoch 8/25
+2021-06-08 07:31:33,557:INFO: Loading the datasets...
+2021-06-08 07:31:33,628:INFO: - done.
+2021-06-08 07:31:35,205:INFO: Starting training for 25 epoch(s)
+2021-06-08 07:31:35,206:INFO: Epoch 1/25
+2021-06-08 07:32:13,365:INFO: - Train metrics: loss: 0.380
+2021-06-08 07:32:16,427:INFO: - Eval metrics : loss: 0.076
+2021-06-08 07:32:16,468:INFO: - Found new best MSE loss
+2021-06-08 07:32:16,469:INFO: Epoch 2/25
+2021-06-08 07:32:57,500:INFO: - Train metrics: loss: 0.070
+2021-06-08 07:33:00,631:INFO: - Eval metrics : loss: 0.080
+2021-06-08 07:33:00,663:INFO: Epoch 3/25
+2021-06-08 07:33:41,710:INFO: - Train metrics: loss: 0.061
+2021-06-08 07:33:44,874:INFO: - Eval metrics : loss: 0.060
+2021-06-08 07:33:44,914:INFO: - Found new best MSE loss
+2021-06-08 07:33:44,915:INFO: Epoch 4/25
+2021-06-08 07:34:26,529:INFO: - Train metrics: loss: 0.052
+2021-06-08 07:34:29,709:INFO: - Eval metrics : loss: 0.063
+2021-06-08 07:34:29,734:INFO: Epoch 5/25
+2021-06-08 07:35:11,237:INFO: - Train metrics: loss: 0.040
+2021-06-08 07:35:14,401:INFO: - Eval metrics : loss: 0.095
+2021-06-08 07:35:14,432:INFO: Epoch 6/25
+2021-06-08 07:35:56,051:INFO: - Train metrics: loss: 0.032
+2021-06-08 07:35:59,237:INFO: - Eval metrics : loss: 0.073
+2021-06-08 07:35:59,261:INFO: Epoch 7/25
+2021-06-08 07:36:40,874:INFO: - Train metrics: loss: 0.026
+2021-06-08 07:36:44,037:INFO: - Eval metrics : loss: 0.071
+2021-06-08 07:36:44,069:INFO: Epoch 8/25
+2021-06-08 07:37:25,817:INFO: - Train metrics: loss: 0.020
+2021-06-08 07:37:29,010:INFO: - Eval metrics : loss: 0.071
+2021-06-08 07:37:29,032:INFO: Epoch 9/25
+2021-06-08 07:38:11,195:INFO: - Train metrics: loss: 0.017
+2021-06-08 07:38:14,447:INFO: - Eval metrics : loss: 0.073
+2021-06-08 07:38:14,480:INFO: Epoch 10/25
+2021-06-08 07:38:57,079:INFO: - Train metrics: loss: 0.015
+2021-06-08 07:39:00,264:INFO: - Eval metrics : loss: 0.074
+2021-06-08 07:39:00,293:INFO: Epoch 11/25
+2021-06-08 07:39:42,521:INFO: - Train metrics: loss: 0.013
+2021-06-08 07:39:45,769:INFO: - Eval metrics : loss: 0.074
+2021-06-08 07:39:45,804:INFO: Epoch 12/25
+2021-06-08 07:40:27,766:INFO: - Train metrics: loss: 0.012
+2021-06-08 07:40:30,939:INFO: - Eval metrics : loss: 0.073
+2021-06-08 07:40:30,969:INFO: Epoch 13/25
+2021-06-08 07:41:12,677:INFO: - Train metrics: loss: 0.011
+2021-06-08 07:41:15,849:INFO: - Eval metrics : loss: 0.070
+2021-06-08 07:41:15,883:INFO: Epoch 14/25
+2021-06-08 07:41:57,917:INFO: - Train metrics: loss: 0.010
+2021-06-08 07:42:01,025:INFO: - Eval metrics : loss: 0.069
+2021-06-08 07:42:01,056:INFO: Epoch 15/25
+2021-06-08 07:42:43,329:INFO: - Train metrics: loss: 0.010
+2021-06-08 07:42:46,532:INFO: - Eval metrics : loss: 0.073
+2021-06-08 07:42:46,565:INFO: Epoch 16/25
+2021-06-08 07:43:28,817:INFO: - Train metrics: loss: 0.008
+2021-06-08 07:43:31,949:INFO: - Eval metrics : loss: 0.079
+2021-06-08 07:43:31,980:INFO: Epoch 17/25
+2021-06-08 07:44:14,031:INFO: - Train metrics: loss: 0.008
+2021-06-08 07:44:17,129:INFO: - Eval metrics : loss: 0.074
+2021-06-08 07:44:17,157:INFO: Epoch 18/25
+2021-06-08 07:44:58,817:INFO: - Train metrics: loss: 0.008
+2021-06-08 07:45:01,998:INFO: - Eval metrics : loss: 0.072
+2021-06-08 07:45:02,029:INFO: Epoch 19/25
+2021-06-08 07:45:43,269:INFO: - Train metrics: loss: 0.007
+2021-06-08 07:45:46,377:INFO: - Eval metrics : loss: 0.072
+2021-06-08 07:45:46,408:INFO: Epoch 20/25
+2021-06-08 07:50:38,965:INFO: Loading the datasets...
+2021-06-08 07:50:39,037:INFO: - done.
+2021-06-08 07:50:40,660:INFO: Starting training for 25 epoch(s)
+2021-06-08 07:50:40,661:INFO: Epoch 1/25
+2021-06-08 07:51:12,148:INFO: - Train metrics: loss: 0.415
+2021-06-08 07:51:15,302:INFO: - Eval metrics : loss: 0.064
+2021-06-08 07:52:35,479:INFO: Loading the datasets...
+2021-06-08 07:52:35,552:INFO: - done.
+2021-06-08 07:52:37,152:INFO: Starting training for 25 epoch(s)
+2021-06-08 07:52:37,152:INFO: Epoch 1/25
+2021-06-08 07:53:08,826:INFO: - Train metrics: loss: 0.415
+2021-06-08 07:53:12,012:INFO: - Eval metrics : loss: 0.064
+2021-06-08 07:54:51,822:INFO: Loading the datasets...
+2021-06-08 07:54:51,899:INFO: - done.
+2021-06-08 07:54:53,581:INFO: Starting training for 25 epoch(s)
+2021-06-08 07:54:53,582:INFO: Epoch 1/25
+2021-06-08 07:55:26,329:INFO: - Train metrics: loss: 0.415
+2021-06-08 07:55:29,452:INFO: - Eval metrics : loss: 0.064
+2021-06-08 10:01:18,568:INFO: Loading the datasets...
+2021-06-08 10:01:18,637:INFO: - done.
+2021-06-08 10:01:20,150:INFO: Starting training for 25 epoch(s)
+2021-06-08 10:01:20,151:INFO: Epoch 1/25
+2021-06-08 10:01:59,719:INFO: Loading the datasets...
+2021-06-08 10:01:59,788:INFO: - done.
+2021-06-08 10:02:01,307:INFO: Starting training for 25 epoch(s)
+2021-06-08 10:02:01,308:INFO: Epoch 1/25
+2021-06-08 10:02:16,731:INFO: Loading the datasets...
+2021-06-08 10:02:16,803:INFO: - done.
+2021-06-08 10:02:18,308:INFO: Starting training for 25 epoch(s)
+2021-06-08 10:02:18,309:INFO: Epoch 1/25
+2021-06-08 10:02:30,147:INFO: Loading the datasets...
+2021-06-08 10:02:30,216:INFO: - done.
+2021-06-08 10:02:31,719:INFO: Starting training for 25 epoch(s)
+2021-06-08 10:02:31,720:INFO: Epoch 1/25
+2021-06-08 10:02:54,772:INFO: Loading the datasets...
+2021-06-08 10:02:54,842:INFO: - done.
+2021-06-08 10:02:56,368:INFO: Starting training for 25 epoch(s)
+2021-06-08 10:02:56,369:INFO: Epoch 1/25
+2021-06-08 10:03:34,576:INFO: Loading the datasets...
+2021-06-08 10:03:34,645:INFO: - done.
+2021-06-08 10:03:36,160:INFO: Starting training for 25 epoch(s)
+2021-06-08 10:03:36,161:INFO: Epoch 1/25
+2021-06-08 10:04:04,842:INFO: - Train metrics: rmse_loss: 0.375 ; mae_loss: 0.286 ; loss: 0.415
+2021-06-08 10:04:07,465:INFO: - Eval metrics : rmse_loss: 0.234 ; mae_loss: 0.180 ; loss: 0.064
+2021-06-08 10:04:07,490:INFO: - Found new best MSE loss
+2021-06-08 10:04:07,490:INFO: Epoch 2/25
+2021-06-08 10:06:44,275:INFO: Loading the datasets...
+2021-06-08 10:06:44,344:INFO: - done.
+2021-06-08 10:06:45,876:INFO: Starting training for 10 epoch(s)
+2021-06-08 10:06:45,877:INFO: Epoch 1/10
+2021-06-08 10:07:15,703:INFO: - Train metrics: rmse_loss: 0.375 ; mae_loss: 0.286 ; loss: 0.415
+2021-06-08 10:07:18,793:INFO: - Eval metrics : rmse_loss: 0.234 ; mae_loss: 0.180 ; loss: 0.064
+2021-06-08 10:07:18,818:INFO: - Found new best MSE loss
+2021-06-08 10:07:18,819:INFO: Epoch 2/10
+2021-06-08 10:07:50,733:INFO: - Train metrics: rmse_loss: 0.261 ; mae_loss: 0.179 ; loss: 0.069
+2021-06-08 10:07:53,624:INFO: - Eval metrics : rmse_loss: 0.209 ; mae_loss: 0.144 ; loss: 0.056
+2021-06-08 10:07:53,653:INFO: - Found new best MSE loss
+2021-06-08 10:07:53,653:INFO: Epoch 3/10
+2021-06-08 10:08:27,760:INFO: - Train metrics: rmse_loss: 0.250 ; mae_loss: 0.168 ; loss: 0.063
+2021-06-08 10:08:30,653:INFO: - Eval metrics : rmse_loss: 0.213 ; mae_loss: 0.152 ; loss: 0.059
+2021-06-08 10:08:30,671:INFO: Epoch 4/10
+2021-06-08 10:09:46,497:INFO: Loading the datasets...
+2021-06-08 10:09:46,567:INFO: - done.
+2021-06-08 10:09:48,104:INFO: Starting training for 10 epoch(s)
+2021-06-08 10:09:48,105:INFO: Epoch 1/10
+2021-06-08 10:10:17,484:INFO: - Train metrics: rmse_loss: 0.375 ; mae_loss: 0.286 ; loss: 0.415
+2021-06-08 10:10:20,439:INFO: - Eval metrics : rmse_loss: 0.234 ; mae_loss: 0.180 ; loss: 0.064
+2021-06-08 10:10:20,531:INFO: - Found new best MSE loss
+2021-06-08 10:10:20,532:INFO: Epoch 2/10
+2021-06-08 10:10:53,298:INFO: - Train metrics: rmse_loss: 0.261 ; mae_loss: 0.179 ; loss: 0.069
+2021-06-08 10:10:56,250:INFO: - Eval metrics : rmse_loss: 0.209 ; mae_loss: 0.144 ; loss: 0.056
+2021-06-08 10:10:56,315:INFO: - Found new best MSE loss
+2021-06-08 10:10:56,316:INFO: Epoch 3/10
+2021-06-08 10:11:28,198:INFO: - Train metrics: rmse_loss: 0.250 ; mae_loss: 0.168 ; loss: 0.063
+2021-06-08 10:11:31,234:INFO: - Eval metrics : rmse_loss: 0.213 ; mae_loss: 0.152 ; loss: 0.059
+2021-06-08 10:11:31,296:INFO: Epoch 4/10
+2021-06-08 10:13:22,571:INFO: Loading the datasets...
+2021-06-08 10:13:22,642:INFO: - done.
+2021-06-08 10:13:24,203:INFO: Starting training for 10 epoch(s)
+2021-06-08 10:13:24,205:INFO: Epoch 1/10
+2021-06-08 10:13:53,973:INFO: - Train metrics: rmse_loss: 0.375 ; mae_loss: 0.286 ; loss: 0.415
+2021-06-08 10:13:56,821:INFO: - Eval metrics : rmse_loss: 0.234 ; mae_loss: 0.180 ; loss: 0.064
+2021-06-08 10:13:56,889:INFO: - Found new best MSE loss
+2021-06-08 10:13:56,889:INFO: Epoch 2/10
+2021-06-08 10:14:28,880:INFO: - Train metrics: rmse_loss: 0.261 ; mae_loss: 0.179 ; loss: 0.069
+2021-06-08 10:14:31,766:INFO: - Eval metrics : rmse_loss: 0.209 ; mae_loss: 0.144 ; loss: 0.056
+2021-06-08 10:14:31,830:INFO: - Found new best MSE loss
+2021-06-08 10:14:31,830:INFO: Epoch 3/10
+2021-06-08 10:15:05,147:INFO: - Train metrics: rmse_loss: 0.250 ; mae_loss: 0.168 ; loss: 0.063
+2021-06-08 10:15:08,073:INFO: - Eval metrics : rmse_loss: 0.213 ; mae_loss: 0.152 ; loss: 0.059
+2021-06-08 10:15:08,134:INFO: Epoch 4/10
+2021-06-08 10:15:40,795:INFO: - Train metrics: rmse_loss: 0.241 ; mae_loss: 0.160 ; loss: 0.059
+2021-06-08 10:15:43,685:INFO: - Eval metrics : rmse_loss: 0.214 ; mae_loss: 0.146 ; loss: 0.063
+2021-06-08 10:15:43,744:INFO: Epoch 5/10

@@ -2,6 +2,7 @@
 
 import torch.nn as nn
 import torch.nn.functional as F
+import numpy as np
 
 
 class Net(nn.Module):
@@ -18,16 +19,15 @@ class Net(nn.Module):
         # Input has shape (101, 2)
         # 2 fully connected layers to transform the output of the convolution layers to the final output
         self.fc1 = nn.Linear(202, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, 512)
+        self.fc2 = nn.Linear(512, 512)
+        self.fc3 = nn.Linear(512, 256)
+        self.fc4 = nn.Linear(256, 128)
+        self.fc5 = nn.Linear(128, 1)
+        
         self.batch_norm1 = nn.BatchNorm1d(512)
-        self.fc4 = nn.Linear(512, 512)
         self.batch_norm2 = nn.BatchNorm1d(512)
-        self.fc5 = nn.Linear(512, 256)
         self.batch_norm3 = nn.BatchNorm1d(256)
-        self.fc6 = nn.Linear(256, 128)
         self.batch_norm4 = nn.BatchNorm1d(128)
-        self.fc7 = nn.Linear(128, 1)
         self.dropout_rate = params.dropout_rate
         self.dropout_layer = nn.Dropout2d(p=self.dropout_rate)
 
@@ -46,23 +46,19 @@ class Net(nn.Module):
         s = s.view(-1, 202)
         s = F.relu(self.fc1(s))
         s = F.relu(self.fc2(s))
-        s = self.dropout_layer(s)
-        residual = s
         s = F.relu(self.fc3(s))
-        s = self.batch_norm1(s)
         s = F.relu(self.fc4(s))
-        s = self.batch_norm2(s)
-        s = F.relu(self.fc5(s))
-        s = self.batch_norm3(s)
-        s += residual
-        s = F.relu(self.fc6(s))
-        s = self.batch_norm4(s)
-        s = self.fc7(s)
-        # s = F.relu(self.fc1(s))
-        # s = F.relu(self.fc2(s))
-        # s = F.relu(self.fc3(s))
+        s = self.fc5(s)
         s = s.squeeze()
         return s
+
+def mae_loss(outputs, labels):
+    num_examples = outputs.shape[0]
+    return np.sum(abs(outputs-labels))/num_examples
+
+def rmse_loss(outputs, labels):
+    num_examples = outputs.shape[0]
+    return np.sqrt(np.sum((outputs - labels)**2)/num_examples)
 
 # We are able to define arbitrary metrics for our models, beyond L2 loss, and
 # print them out at each epoch. For an example, see the starter code:
@@ -70,6 +66,8 @@ class Net(nn.Module):
 
 # maintain all metrics required in this dictionary- these are used in the training and evaluation loops
 metrics = {
+    'rmse_loss': rmse_loss,
+    'mae_loss': mae_loss
     # 'accuracy': accuracy,
     # could add more metrics such as accuracy for each token type
 }

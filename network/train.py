@@ -97,7 +97,7 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
                                 for k, v in metrics_mean.items())
     logging.info("- Train metrics: " + metrics_string)
-    return metrics_mean
+    return metrics_mean, train_batch
 
 
 def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_fn, metrics, params, model_dir,
@@ -130,12 +130,15 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
         logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
 
         # compute number of batches in one epoch (one full pass over the training set)
-        train_metrics = train(model, optimizer, loss_fn, train_dataloader, metrics, params)
+        train_metrics, sample_input = train(model, optimizer, loss_fn, train_dataloader, metrics, params)
 
         # Evaluate for one epoch on validation set
         val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params)
-        
-        writer.add_scalars('Loss', {"train": train_metrics['loss'], "validation": val_metrics['loss']}, epoch + 1)
+
+        writer.add_scalars('MSE Loss', {"train": train_metrics['loss'], "validation": val_metrics['loss']}, epoch + 1)
+        writer.add_scalars('RMSE Loss', {"train": train_metrics['rmse_loss'], "validation": val_metrics['rmse_loss']}, epoch + 1)
+        writer.add_scalars('MAE Loss', {"train": train_metrics['mae_loss'], "validation": val_metrics['mae_loss']}, epoch + 1)
+        writer.add_graph(model, sample_input)
         
         val_loss = val_metrics['loss']
         is_best = val_loss <= best_val_loss
