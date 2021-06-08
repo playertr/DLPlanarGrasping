@@ -8,6 +8,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 from torch.autograd import Variable
+from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 import utils
@@ -96,6 +97,7 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
                                 for k, v in metrics_mean.items())
     logging.info("- Train metrics: " + metrics_string)
+    return metrics_mean
 
 
 def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_fn, metrics, params, model_dir,
@@ -121,17 +123,20 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
         utils.load_checkpoint(restore_path, model, optimizer)
 
     best_val_loss = np.inf
+    writer = SummaryWriter(log_dir='./log')
 
     for epoch in range(params.num_epochs):
         # Run one epoch
         logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
 
         # compute number of batches in one epoch (one full pass over the training set)
-        train(model, optimizer, loss_fn, train_dataloader, metrics, params)
+        train_metrics = train(model, optimizer, loss_fn, train_dataloader, metrics, params)
 
         # Evaluate for one epoch on validation set
         val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params)
-
+        
+        writer.add_scalars('Loss', {"train": train_metrics['loss'], "validation": val_metrics['loss']}, epoch + 1)
+        
         val_loss = val_metrics['loss']
         is_best = val_loss <= best_val_loss
 
@@ -156,6 +161,8 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
         last_json_path = os.path.join(
             model_dir, "metrics_val_last_weights.json")
         utils.save_dict_to_json(val_metrics, last_json_path)
+    
+    writer.close()
 
 
 if __name__ == '__main__':
