@@ -39,6 +39,10 @@ shapes = pg.get_shapes(5, params.DataGen.N_POLYGONS)
 
 ## Collect rendered views of each polygon as well as SDF fields
 def collect_examples(shape):
+
+    np.random.seed()    # Need to reset RNG for this worker. Numpy's RNG does not effectively handle fork-based multiprocessing, as referenced here:
+    # https://github.com/pytorch/pytorch/issues/5059
+
     examples = []
     for _ in range(params.DataGen.N_PERSPECTIVES):
         min_x, max_x, min_y, max_y = params.DataGen.ROBOT_RANGE
@@ -137,8 +141,12 @@ split1 = int(0.8 * len(examples))
 split2 = int(0.9 * len(examples))
 
 train_examples = examples[:split1]
-val_examples   = examples[split1:split2]
-test_examples  = examples[split2:]
+val_examples = examples[split1:split2]
+test_examples = examples[split2:]
+# from copy import deepcopy
+# train_examples = deepcopy(examples[:split1])
+# val_examples   = deepcopy(examples[split1:split2])
+# test_examples  = deepcopy(examples[split2:])
 
 random.seed(535)
 random.shuffle(train_examples)
