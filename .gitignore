@@ -8,4 +8,5 @@ __pycache__/
 *.zip
 notebooks/scratchwork/figs
 old/
-network/log/
+sdf_network/log/
+grasp_network/log
