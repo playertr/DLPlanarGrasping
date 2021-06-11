@@ -62,8 +62,10 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
                 train_batch), Variable(labels_batch)
 
             # compute model output and loss
-            output_batch = model(train_batch)
+            output_batch, m2x2, m64x64 = model(train_batch)
 
+            # loss = net.pointnetloss(output_batch, labels_batch, m2x2, m64x64)
+            labels_batch = labels_batch.view(-1, 1)
             loss = loss_fn(output_batch, labels_batch)
 
             # clear previous gradients, compute gradients of all variables wrt loss
@@ -91,13 +93,16 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
             t.set_postfix(loss='{:05.3f}'.format(loss_avg()))
             t.update()
 
-    # compute mean of all metrics in summary
-    metrics_mean = {metric: np.mean([x[metric]
-                                     for x in summ]) for metric in summ[0]}
-    metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
-                                for k, v in metrics_mean.items())
-    logging.info("- Train metrics: " + metrics_string)
-    return metrics_mean, train_batch
+    metrics = evaluate(model, loss_fn, dataloader, metrics, params, "- Train metrics : ")
+    return metrics, train_batch
+
+    # # compute mean of all metrics in summary
+    # metrics_mean = {metric: np.mean([x[metric]
+    #                                  for x in summ]) for metric in summ[0]}
+    # metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
+    #                             for k, v in metrics_mean.items())
+    # logging.info("- Train metrics: " + metrics_string)
+    # return metrics_mean, train_batch
 
 
 def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_fn, metrics, params, model_dir,
@@ -133,7 +138,7 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
         train_metrics, sample_input = train(model, optimizer, loss_fn, train_dataloader, metrics, params)
 
         # Evaluate for one epoch on validation set
-        val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params)
+        val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params, "- Eval metrics : ")
 
         writer.add_scalars('MSE Loss', {"train": train_metrics['loss'], "validation": val_metrics['loss']}, epoch + 1)
         writer.add_scalars('RMSE Loss', {"train": train_metrics['rmse_loss'], "validation": val_metrics['rmse_loss']}, epoch + 1)
@@ -200,7 +205,8 @@ if __name__ == '__main__':
     logging.info("- done.")
 
     # Define the model and optimizer
-    model = net.Net(params).cuda() if params.cuda else net.Net(params)
+    # model = net.Net(params).cuda() if params.cuda else net.Net(params)
+    model = net.PointNet().cuda() if params.cuda else net.PointNet()
     optimizer = optim.Adam(model.parameters(), lr=params.learning_rate)
 
     # fetch loss function and metrics
