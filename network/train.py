@@ -212,8 +212,8 @@ if __name__ == '__main__':
     logging.info("- done.")
 
     # Define the model and optimizer
-    # model = net.Net(params).cuda() if params.cuda else net.Net(params)
-    model = net.PointNet().cuda() if params.cuda else net.PointNet()
+    model = net.Net(params).cuda() if params.cuda else net.Net(params)
+    # model = net.PointNet().cuda() if params.cuda else net.PointNet()
     optimizer = optim.Adam(model.parameters(), lr=params.learning_rate)
 
     # fetch loss function and metrics

@@ -100,8 +100,9 @@ class Transform(nn.Module):
 
 
 class PointNet(nn.Module):
-    def __init__(self, classes = 1):
+    def __init__(self, classes = 1, input_num = 100):
         super().__init__()
+        self.input_num = input_num
         self.transform = Transform()
         # self.fc1 = nn.Linear(1024, 512)
         # self.fc2 = nn.Linear(512, 256)
@@ -125,7 +126,7 @@ class PointNet(nn.Module):
         self.logsoftmax = nn.LogSoftmax(dim=1)
 
     def forward(self, x):
-        x = x.view(-1, 2, 101)
+        x = x.view(-1, 2, self.input_num)
         xb, matrix2x2, matrix64x64 = self.transform(x)
         xb = F.relu(self.bn1(self.fc1(xb)))
         xb = F.relu(self.bn2(self.dropout(self.fc2(xb))))
@@ -147,22 +148,12 @@ class Net(nn.Module):
         # Input has shape (101, 2)
         # 2 fully connected layers to transform the output of the convolution layers to the final output
         
-        self.conv1 = nn.Conv1d(2, 16, 3, padding=1)
-        self.conv2 = nn.Conv1d(16, 16, 3, padding=1)
+        classes=64
+        self.pointnet1 = PointNet(classes=64)
         
-        self.conv3 = nn.Conv1d(8, 8, 3, padding=1)
-        
-        self.fc1 = nn.Linear(100, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, 128)
-        self.fc4 = nn.Linear(128, 1)
-        
-        self.batch_norm1 = nn.BatchNorm1d(512)
-        self.batch_norm2 = nn.BatchNorm1d(512)
-        self.batch_norm3 = nn.BatchNorm1d(256)
-        self.batch_norm4 = nn.BatchNorm1d(128)
-        self.dropout_rate = params.dropout_rate
-        self.dropout_layer = nn.Dropout2d(p=self.dropout_rate)
+        self.fc1 = nn.Linear(classes+2+4, 1024)
+        self.fc2 = nn.Linear(1024, 512)
+        self.fc3 = nn.Linear(512, 1)
 
     def forward(self, s):
         """
@@ -176,22 +167,25 @@ class Net(nn.Module):
 
         Note: the dimensions after each step are provided
         """
-        s = s.view(-1, 2, 101)
+        scan_pts = s[:,:-1,:]
+        pt = s[:,-1,:]
+
+        pn_features, matrix2x2, matrix64x64 = self.pointnet1(scan_pts)
         
-        s = F.relu(self.conv1(s))
-        s = F.relu(self.conv2(s))
-        s = F.max_pool2d(s, 2)
-        
-        s = F.relu(self.conv3(s))
-        s = F.max_pool2d(s, 2)
-        s = s.view(-1, self.num_flat_features(s))
+        s = torch.cat([
+            matrix2x2.view(-1, 4),
+            pn_features,
+            pt
+            ],
+            dim=1)
 
         s = F.relu(self.fc1(s))
         s = F.relu(self.fc2(s))
-        s = F.relu(self.fc3(s))
-        s = self.fc4(s)
-        s = s.squeeze()
-        return s
+        s = self.fc3(s)
+
+
+        
+        return s, matrix2x2, matrix64x64
 
     def num_flat_features(self, x):
         size = x.size()[1:]  # all dimensions except the batch dimension
