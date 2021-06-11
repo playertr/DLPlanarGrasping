@@ -93,8 +93,15 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
             t.set_postfix(loss='{:05.3f}'.format(loss_avg()))
             t.update()
 
-    metrics = evaluate(model, loss_fn, dataloader, metrics, params, "- Train metrics : ")
-    return metrics, train_batch
+    # metrics = evaluate(model, loss_fn, dataloader, metrics, params, "- Train metrics : ")
+
+    metrics_mean = {metric: np.mean([x[metric]
+                                     for x in summ]) for metric in summ[0]}
+    metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
+                                for k, v in metrics_mean.items())
+    logging.info("- Train metrics: " + metrics_string)
+
+    return metrics#, train_batch
 
     # # compute mean of all metrics in summary
     # metrics_mean = {metric: np.mean([x[metric]
@@ -135,15 +142,15 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
         logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
 
         # compute number of batches in one epoch (one full pass over the training set)
-        train_metrics, sample_input = train(model, optimizer, loss_fn, train_dataloader, metrics, params)
+        train_metrics = train(model, optimizer, loss_fn, train_dataloader, metrics, params)
 
         # Evaluate for one epoch on validation set
         val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params, "- Eval metrics : ")
 
-        writer.add_scalars('MSE Loss', {"train": train_metrics['loss'], "validation": val_metrics['loss']}, epoch + 1)
-        writer.add_scalars('RMSE Loss', {"train": train_metrics['rmse_loss'], "validation": val_metrics['rmse_loss']}, epoch + 1)
-        writer.add_scalars('MAE Loss', {"train": train_metrics['mae_loss'], "validation": val_metrics['mae_loss']}, epoch + 1)
-        writer.add_graph(model, sample_input)
+        # writer.add_scalars('MSE Loss', {"train": train_metrics['loss'], "validation": val_metrics['loss']}, epoch + 1)
+        # writer.add_scalars('RMSE Loss', {"train": train_metrics['rmse_loss'], "validation": val_metrics['rmse_loss']}, epoch + 1)
+        # writer.add_scalars('MAE Loss', {"train": train_metrics['mae_loss'], "validation": val_metrics['mae_loss']}, epoch + 1)
+        # writer.add_graph(model, sample_input)
         
         val_loss = val_metrics['loss']
         is_best = val_loss <= best_val_loss
