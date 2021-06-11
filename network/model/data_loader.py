@@ -2,7 +2,7 @@ import os
 import pickle
 import numpy as np
 
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, Subset
 
 class SDFDataset(Dataset):
     """
@@ -87,7 +87,9 @@ def fetch_dataloader(types, data_dir, params):
 
             # use the train_transformer if training data, else use eval_transformer without random flip
             if split == 'train':
-                dl = DataLoader(SDFDataset(path), batch_size=params.batch_size, shuffle=True,
+                ds = SDFDataset(path)
+                ds = Subset(ds, range(0, len(ds), params.dataset_skip_num))
+                dl = DataLoader(ds, batch_size=params.batch_size, shuffle=True,
                                         num_workers=params.num_workers,
                                         pin_memory=params.cuda)
             else:

@@ -4671,3 +4671,26 @@
 2021-06-11 11:00:26,819:INFO: - done.
 2021-06-11 11:00:28,445:INFO: Starting training for 10 epoch(s)
 2021-06-11 11:00:28,446:INFO: Epoch 1/10
+2021-06-11 11:52:45,582:INFO: Loading the datasets...
+2021-06-11 11:53:06,587:INFO: Loading the datasets...
+2021-06-11 11:53:28,140:INFO: Loading the datasets...
+2021-06-11 11:54:43,121:INFO: Loading the datasets...
+2021-06-11 11:54:43,195:INFO: - done.
+2021-06-11 11:54:44,857:INFO: Starting training for 10 epoch(s)
+2021-06-11 11:54:44,858:INFO: Epoch 1/10
+2021-06-11 11:55:45,959:INFO: Loading the datasets...
+2021-06-11 11:55:46,033:INFO: - done.
+2021-06-11 11:55:47,653:INFO: Starting training for 10 epoch(s)
+2021-06-11 11:55:47,654:INFO: Epoch 1/10
+2021-06-11 11:58:41,350:INFO: Loading the datasets...
+2021-06-11 11:58:41,423:INFO: - done.
+2021-06-11 11:58:43,014:INFO: Starting training for 10 epoch(s)
+2021-06-11 11:58:43,015:INFO: Epoch 1/10
+2021-06-11 12:00:10,423:INFO: Loading the datasets...
+2021-06-11 12:00:10,498:INFO: - done.
+2021-06-11 12:00:12,107:INFO: Starting training for 10 epoch(s)
+2021-06-11 12:00:12,108:INFO: Epoch 1/10
+2021-06-11 12:00:46,141:INFO: Loading the datasets...
+2021-06-11 12:00:46,215:INFO: - done.
+2021-06-11 12:00:47,830:INFO: Starting training for 10 epoch(s)
+2021-06-11 12:00:47,831:INFO: Epoch 1/10
