@@ -6,5 +6,6 @@ __pycache__/
 *.tar
 *.jpg
 *.zip
+notebooks/scratchwork/figs
 old/
 network/log/

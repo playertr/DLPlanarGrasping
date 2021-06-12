@@ -21,6 +21,7 @@ from multiprocessing import Pool, cpu_count
 import itertools
 import argparse
 import pickle
+import random
 
 ## Parse command line arguments
 parser = argparse.ArgumentParser()
@@ -65,8 +66,40 @@ def collect_examples(shape):
         query_pts = np.column_stack([xs, ys])
         dists = te.sdf(query_pts)
 
-        view = (te.scan_pts, query_pts, dists)
-        examples.append(view)
+        # Collect grasp qualities
+        num_contact_grasps = int(params.DataGen.NUM_GRASPS * params.DataGen.PROPORTION_CONTACT_GRASPS)
+        num_nocontact_grasps = params.DataGen.NUM_GRASPS - num_contact_grasps
+
+        contact_grasps_sofar = 0
+        nocontact_grasps_sofar = 0
+        grasps = []
+        while True:
+            theta = np.random.uniform(*params.DataGen.GRASP_BOUNDS[:2])
+            b = np.random.uniform(*params.DataGen.GRASP_BOUNDS[2:])
+            try:
+                quality = te.grasp_quality(theta, b)
+                if contact_grasps_sofar < num_contact_grasps:
+                    grasps.append((theta, b, quality))
+                    contact_grasps_sofar +=1
+            except ValueError as e:
+                quality = params.DataGen.BAD_GRASP_QUALITY
+                if nocontact_grasps_sofar < num_nocontact_grasps:
+                    grasps.append((theta, b, quality))
+                    nocontact_grasps_sofar +=1
+            except:
+                continue
+            
+            if (contact_grasps_sofar == num_contact_grasps) and (nocontact_grasps_sofar == num_nocontact_grasps):
+                break
+
+        random.shuffle(grasps)
+        thetas = np.array([g[0] for g in grasps])
+        bs = np.array([g[1] for g in grasps])
+        qualities = np.array([g[2] for g in grasps])
+
+        ex = (te.scan_pts, query_pts, dists, thetas, bs, qualities, te)
+        examples.append(ex)
+
     return examples
 
 print("Rendering training examples from polygons.")
@@ -93,6 +126,9 @@ examples = list(itertools.chain(*examples))
 # scan_pts      : an (N_SCAN_POINTS,2) ndarray of coordinates corresponding to the local-frame cartesian locations obtained by casting rays from the robot to the shape. The rays span the entire visible portion of the shape.
 # query_pts     : an (N_SDF_QUERIES, 2) ndarray of uniformly sampled points from the ROBOT_RANGE to sample SDF
 # dists         : the SDF value associated with each query point
+# thetas        : a (NUM_GRASPS,) ndarray of random grasp angles
+# bs            : a (NUM_GRASPS,) ndarray of random grasp offsets
+# qualities     : a (NUM_GRASPS,) ndarray of grasp qualities Q(theta, b)
 
 
 ## Partition into train, test, and validation sets and shuffle data.
@@ -104,7 +140,6 @@ train_examples = examples[:split1]
 val_examples   = examples[split1:split2]
 test_examples  = examples[split2:]
 
-import random
 random.seed(535)
 random.shuffle(train_examples)
 random.shuffle(val_examples)

@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial import ConvexHull
 from pygel3d import hmesh
 import cvxpy as cp
-from shapely.geometry import Polygon, LineString, Point
+from shapely.geometry import Polygon, LineString, Point, MultiLineString
 from data_generation.utils import plot_shape
 import matplotlib.pyplot as plt
 
@@ -188,7 +188,8 @@ def shape_grasp_quality(shape, theta, b, mu=1.):
         float: Ferrari-Canny grasp metric, the magnitude of the the smallest possible wrench that would escape the gripper, assuming a total contact force across all contacts of 1 unit.
     """
     int_pts = intersection_points(shape, theta, b)
-    if len(int_pts)==0: raise ValueError("Line does not intersect shape.")
+    if len(int_pts)==0: 
+        raise ValueError("Line does not intersect shape.")
     vert_pairs = [vertices_from_point(shape, p) for p in int_pts]
     normals = [normal_from_vertices(vert_pair) for vert_pair in vert_pairs]
 
@@ -292,6 +293,11 @@ def intersection_points(shape, theta, b, t=100):
         (left[0], left[1]),
         (right[0], right[1])
     ])
+    intersection = shape.intersection(line)
+    if type(intersection) == MultiLineString:
+        segment1 = np.array(intersection[0])[0]
+        segment2 = np.array(intersection[-1])[1]
+        return np.row_stack([segment1, segment2])
     return np.array(shape.intersection(line))
 
 def line_endpoints(theta, b, t=100):

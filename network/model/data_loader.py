@@ -61,8 +61,9 @@ class SDFDataset(Dataset):
         query_pt = query_pts[pt_idx]
         dist = dists[pt_idx]
         # We want:
-        # INPUT: (500,3) concatenation of Xtrain, ytrain for this shape
-        # OUTPUT: (100,) ndarray of SDF zero points
+        # INPUT: (101, 2) array of points in the local frame
+        # The first 100 are the scan, the last point is the query point
+        # OUTPUT: (1,) ndarray of SDF value
 
         data = np.vstack([
             scan_pts, query_pt
