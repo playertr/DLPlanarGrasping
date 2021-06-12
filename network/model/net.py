@@ -151,7 +151,7 @@ class Net(nn.Module):
         classes=64
         self.pointnet1 = PointNet(classes=64)
         
-        self.fc1 = nn.Linear(classes+2+4, 1024)
+        self.fc1 = nn.Linear(classes+4+202, 1024)
         self.fc2 = nn.Linear(1024, 512)
         self.fc3 = nn.Linear(512, 1)
 
@@ -175,7 +175,7 @@ class Net(nn.Module):
         s = torch.cat([
             matrix2x2.view(-1, 4),
             pn_features,
-            pt
+            s.view(-1, 202)
             ],
             dim=1)
 
@@ -196,16 +196,20 @@ class Net(nn.Module):
 
 
 def pointnetloss(outputs, labels, m2x2, m64x64, alpha = 0.0001):
-    criterion = torch.nn.NLLLoss()
+    criterion = torch.nn.MSELoss()
     bs=outputs.size(0)
     id2x2 = torch.eye(2, requires_grad=True).repeat(bs,1,1)
-    id64x64 = torch.eye(64, requires_grad=True).repeat(bs,1,1)
+    id64x64 = torch.eye(32, requires_grad=True).repeat(bs,1,1) # MUST CHANGE WITH SCALE
     if outputs.is_cuda:
         id2x2=id2x2.cuda()
         id64x64=id64x64.cuda()
     diff2x2 = id2x2-torch.bmm(m2x2,m2x2.transpose(1,2))
     diff64x64 = id64x64-torch.bmm(m64x64,m64x64.transpose(1,2))
     return criterion(outputs, labels) + alpha * (torch.norm(diff2x2)+torch.norm(diff64x64)) / float(bs)
+
+def mse_loss(outputs, labels):
+    criterion = torch.nn.MSELoss()
+    return criterion(torch.Tensor(outputs), torch.Tensor(labels))
 
 
 def mae_loss(outputs, labels):
@@ -224,7 +228,8 @@ def rmse_loss(outputs, labels):
 # maintain all metrics required in this dictionary- these are used in the training and evaluation loops
 metrics = {
     'rmse_loss': rmse_loss,
-    'mae_loss': mae_loss
+    'mae_loss': mae_loss,
+    'mse_loss': mse_loss
     # 'accuracy': accuracy,
     # could add more metrics such as accuracy for each token type
 }
