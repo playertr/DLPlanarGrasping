@@ -9,6 +9,7 @@ import numpy as np
 from . import params
 from shapely.geometry import LineString, MultiLineString, Point
 from .grasp_quality import shape_grasp_quality
+from shapely.geometry import Polygon
 
 class TrainingExample:
     def __init__(self, robx, roby, shape):
@@ -19,6 +20,9 @@ class TrainingExample:
         self.scan_pts   = None # initialized in set_scan_data()
 
         self.set_scan_data()
+
+        coords = np.array(self.shape.exterior.coords)
+        self.tf_shape = Polygon(rotate(coords, -self.robang))
 
     def set_scan_data(self):
         """ Get a local-frame laser scan, its angle, and a signed distance function. """
@@ -61,7 +65,7 @@ class TrainingExample:
         return local_sdf(self.shape, x, self.robang, self.robx, self.roby)
 
     def grasp_quality(self, theta, b):
-        return shape_grasp_quality(self.shape, theta, b, mu=params.TrainingExample.FRICTION_COEFFICIENT)
+        return shape_grasp_quality(self.tf_shape, theta, b, mu=params.TrainingExample.FRICTION_COEFFICIENT)
 
 def vis_bounds(robx, roby, shape):
     """Find angle range at which the shape is visible to a location.
@@ -103,7 +107,13 @@ def vis_bounds(robx, roby, shape):
 
 def global_sdf(shape, ptsg):
     points = [Point(pt[0], pt[1]) for pt in ptsg]
-    return np.array([shape.exterior.distance(point) for point in points])
+    def signed_distance(shape, point):
+        dist = shape.exterior.distance(point)
+        if point.within(shape):
+            dist = dist*-1
+        return dist
+    signed_distances = [signed_distance(shape, pt) for pt in points]
+    return np.array(signed_distances)
 
 def local_sdf(shape, pts, robang, robx, roby):
     ptsg = loc_to_glob(pts, robang, robx, roby)
@@ -129,7 +139,7 @@ def translate(pts, dx, dy):
     return pts + np.array([[dx, dy]])
 
 def rotate(pts, theta):
-    """Rotate an Mx2 ndarray of points through angle theta.
+    """Rotate an Mx2 ndarray of points through angle theta about origin.
 
     Args:
         pts (ndarray): Mx2
