@@ -56,9 +56,8 @@ def evaluate(model, loss_fn, dataloader, metrics, params, log_msg):
         data_batch, labels_batch = Variable(data_batch), Variable(labels_batch)
 
         # compute model output
-        output_batch, m2x2, m64x64 = model(data_batch)
+        output_batch = model(data_batch)
         # loss = net.pointnetloss(output_batch, labels_batch, m2x2, m64x64)
-        labels_batch = labels_batch.view(-1, 1)
         loss = loss_fn(output_batch, labels_batch)
 
         # extract data from torch Variable, move to cpu, convert to numpy arrays
@@ -113,8 +112,7 @@ if __name__ == '__main__':
     # Define the model
     model = net.Net(params).cuda() if params.cuda else net.Net(params)
 
-    # loss_fn = net.loss_fn
-    loss_fn = torch.nn.MSELoss()
+    loss_fn = net.loss_fn
     metrics = net.metrics
 
     logging.info("Starting evaluation")

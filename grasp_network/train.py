@@ -62,10 +62,10 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
                 train_batch), Variable(labels_batch)
 
             # compute model output and loss
-            output_batch, m2x2, m64x64 = model(train_batch)
+            output_batch = model(train_batch)
 
             # loss = net.pointnetloss(output_batch, labels_batch, m2x2, m64x64)
-            labels_batch = labels_batch.view(-1, 1)
+            # labels_batch = labels_batch.view(-1, 1)
             loss = loss_fn(output_batch, labels_batch)
 
             # clear previous gradients, compute gradients of all variables wrt loss
@@ -138,7 +138,7 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
         logging.info("Epoch {}/{}".format(epoch + 1, params.num_epochs))
 
         # compute number of batches in one epoch (one full pass over the training set)
-        train_metrics, sample_input = train(model, optimizer, loss_fn, train_dataloader, metrics, params)
+        train_metrics = train(model, optimizer, loss_fn, train_dataloader, metrics, params)
 
         # Evaluate for one epoch on validation set
         val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params, "- Eval metrics : ")
