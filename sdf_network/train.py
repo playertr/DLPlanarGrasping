@@ -160,7 +160,7 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
 
         # If best_eval, best_save_path
         if is_best:
-            logging.info("- Found new best MSE loss")
+            logging.info("- Found new best training loss")
             best_val_loss = val_loss
 
             # Save best val metrics in a json file in the model directory
