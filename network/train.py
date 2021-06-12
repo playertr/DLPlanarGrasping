@@ -93,17 +93,13 @@ def train(model, optimizer, loss_fn, dataloader, metrics, params):
             t.set_postfix(loss='{:05.3f}'.format(loss_avg()))
             t.update()
 
-    # metrics = evaluate(model, loss_fn, dataloader, metrics, params, "- Train metrics : ")
+    metrics = evaluate(model, loss_fn, dataloader, metrics, params, "- Train metrics : ")
 
-    metrics_mean = {metric: np.mean([x[metric]
-                                     for x in summ]) for metric in summ[0]}
-    metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
-                                for k, v in metrics_mean.items())
-    logging.info("- Train metrics: " + metrics_string)
+
 
     return metrics#, train_batch
 
-    # # compute mean of all metrics in summary
+    # compute mean of all metrics in summary
     # metrics_mean = {metric: np.mean([x[metric]
     #                                  for x in summ]) for metric in summ[0]}
     # metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
@@ -147,9 +143,9 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
         # Evaluate for one epoch on validation set
         val_metrics = evaluate(model, loss_fn, val_dataloader, metrics, params, "- Eval metrics : ")
 
-        # writer.add_scalars('MSE Loss', {"train": train_metrics['loss'], "validation": val_metrics['loss']}, epoch + 1)
-        # writer.add_scalars('RMSE Loss', {"train": train_metrics['rmse_loss'], "validation": val_metrics['rmse_loss']}, epoch + 1)
-        # writer.add_scalars('MAE Loss', {"train": train_metrics['mae_loss'], "validation": val_metrics['mae_loss']}, epoch + 1)
+        writer.add_scalars('MSE Loss', {"train": train_metrics['mse_loss'], "validation": val_metrics['mse_loss']}, epoch + 1)
+        writer.add_scalars('RMSE Loss', {"train": train_metrics['rmse_loss'], "validation": val_metrics['rmse_loss']}, epoch + 1)
+        writer.add_scalars('MAE Loss', {"train": train_metrics['mae_loss'], "validation": val_metrics['mae_loss']}, epoch + 1)
         # writer.add_graph(model, sample_input)
         
         val_loss = val_metrics['loss']
@@ -213,11 +209,13 @@ if __name__ == '__main__':
 
     # Define the model and optimizer
     model = net.Net(params).cuda() if params.cuda else net.Net(params)
-    # model = net.PointNet().cuda() if params.cuda else net.PointNet()
+    # model = net.PointNet(input_num=101).cuda() if params.cuda else net.PointNet()
     optimizer = optim.Adam(model.parameters(), lr=params.learning_rate)
 
     # fetch loss function and metrics
-    loss_fn = torch.nn.MSELoss()
+    # loss_fn = torch.nn.MSELoss()
+    loss_fn = torch.nn.L1Loss()
+    # loss_fn = net.pointnetloss
     metrics = net.metrics
 
     # Train the model
