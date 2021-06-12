@@ -34,8 +34,8 @@ class Net(nn.Module):
         self.sdf.eval()
 
         # Create a regular grid of 2D sample points
-        x = torch.linspace(0, 15, 9)
-        y = torch.linspace(-5, 5, 5)
+        x = torch.linspace(0, 15, 4)
+        y = torch.linspace(-5, 5, 4)
         X, Y = torch.meshgrid(x, y)
         query_pts = torch.column_stack((X.ravel(), Y.ravel())) # Put the grid in an Nx2 matrix
         self.num_query_pts = query_pts.shape[0]
@@ -46,7 +46,7 @@ class Net(nn.Module):
         # self.conv1 = nn.Conv1d(2, 16, 3, padding=1)
         # self.conv2 = nn.Conv1d(16, 2, 3, padding=1)
         # self.fc1 = nn.Linear(202, 512)
-        self.fc1 = nn.Linear(202 + self.num_query_pts, 512)
+        self.fc1 = nn.Linear(202 + 64, 512)
         self.fc2 = nn.Linear(512, 512)
         self.fc3 = nn.Linear(512, 1)
         # self.batch_norm1 = nn.BatchNorm1d(256)
@@ -76,26 +76,32 @@ class Net(nn.Module):
         """
         # evaluate sdf at regularly spaced points
         scan_pts = s[:,:-1,:] # The scan includes everything but the last row
-        tpts = torch.tile(scan_pts, (1, 1, self.num_query_pts)) # Copy the scan points many times
-        qpts = self.query_pts.expand(s.shape[0], 1, self.num_query_pts*2)
-        mtx = torch.cat(( # Stack each repeated scan matrix on top of a 2D query pt
-            tpts,
-            qpts), dim=-2)
 
-        # Turn the extra-wide repeated matrix into a 3-d matrix that can be fed
-        # into a nn.Module
-        mtx = torch.swapaxes(mtx, -1, -2)
-        mtx = torch.reshape(mtx, (-1, self.num_query_pts, 2, mtx.shape[-1]))
-        mtx = torch.swapaxes(mtx, -1, -2).contiguous()
+        cnn_vector, m2x2, m64x64 = self.sdf.pointnet1(scan_pts)
 
-        distances = self.sdf(mtx).view(-1, self.num_query_pts)
+        # tpts = torch.tile(scan_pts, (1, 1, self.num_query_pts)) # Copy the scan points many times
+        # qpts = self.query_pts.expand(s.shape[0], 1, self.num_query_pts*2)
+        # mtx = torch.cat(( # Stack each repeated scan matrix on top of a 2D query pt
+        #     tpts,
+        #     qpts), dim=-2)
+
+        # # Turn the extra-wide repeated matrix into a 3-d matrix that can be fed
+        # # into a nn.Module
+        # mtx = torch.swapaxes(mtx, -1, -2)
+        # mtx = torch.reshape(mtx, (-1, self.num_query_pts, 2, mtx.shape[-1]))
+        # mtx = torch.swapaxes(mtx, -1, -2).contiguous()
+
+        # # mtx is torch.Size([256, 45, 101, 2]), need torch.Size([-1, 101, 2])
+        # mtx = mtx.view(-1, 101, 2)
+        # dists, matrix2x2, matrix64x64 = self.sdf(mtx)
+        # distances = dists.view(-1, self.num_query_pts)
 
         
         # s = torch.transpose(s, 2, 1)
         # s = F.relu(self.conv1(s))
         # s = F.relu(self.conv2(s))
         s = s.view(-1, 202)
-        s = torch.cat((s, distances), dim=-1)
+        s = torch.cat((s, cnn_vector), dim=1)
 
         s = F.relu(self.fc1(s))
         s = F.relu(self.fc2(s))
@@ -118,6 +124,10 @@ class Net(nn.Module):
         s = s.squeeze()
         return s
 
+def mse_loss(outputs, labels):
+    criterion = torch.nn.MSELoss()
+    return criterion(torch.Tensor(outputs), torch.Tensor(labels))
+
 def mae_loss(outputs, labels):
     num_examples = outputs.shape[0]
     return np.sum(abs(outputs-labels))/num_examples
@@ -134,7 +144,8 @@ def rmse_loss(outputs, labels):
 # maintain all metrics required in this dictionary- these are used in the training and evaluation loops
 metrics = {
     'rmse_loss': rmse_loss,
-    'mae_loss': mae_loss
+    'mae_loss': mae_loss,
+    'mse_loss': mse_loss
     # 'accuracy': accuracy,
     # could add more metrics such as accuracy for each token type
 }
