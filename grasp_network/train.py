@@ -213,8 +213,8 @@ if __name__ == '__main__':
     optimizer = optim.Adam(model.parameters(), lr=params.learning_rate)
 
     # fetch loss function and metrics
-    # loss_fn = torch.nn.MSELoss()
-    loss_fn = torch.nn.L1Loss()
+    loss_fn = torch.nn.MSELoss()
+    # loss_fn = torch.nn.L1Loss()
     # loss_fn = net.pointnetloss
     metrics = net.metrics
 
