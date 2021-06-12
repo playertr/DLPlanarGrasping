@@ -127,7 +127,7 @@ def train_and_evaluate(model, train_dataloader, val_dataloader, optimizer, loss_
         logging.info("Restoring parameters from {}".format(restore_path))
         utils.load_checkpoint(restore_path, model, optimizer)
 
-    best_val_loss = np.inf
+    best_val_loss = 0.182
     writer = SummaryWriter(log_dir='./log')
 
     for epoch in range(params.num_epochs):

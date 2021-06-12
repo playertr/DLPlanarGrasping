@@ -4,6 +4,9 @@ import numpy as np
 
 from torch.utils.data import Dataset, DataLoader, Subset
 
+import sys
+sys.path.insert(0, '/home/auvdock/Rakesh/OSU/Spring 21/Deep Learning/PlanarGrasping/')
+
 class SDFDataset(Dataset):
     """
     A standard PyTorch definition of Dataset that defines the functions __len__ and __getitem__.
@@ -54,7 +57,7 @@ class SDFDataset(Dataset):
         shape_idx = int(idx / self.sdf_queries_per_shape)
         pt_idx = idx % self.sdf_queries_per_shape
 
-        scan_pts, query_pts, dists = self.examples[shape_idx] # See description above.
+        scan_pts, query_pts, dists, *_ = self.examples[shape_idx] # See description above.
         query_pt = query_pts[pt_idx]
         dist = dists[pt_idx]
         # We want:
@@ -88,6 +91,7 @@ def fetch_dataloader(types, data_dir, params):
             # use the train_transformer if training data, else use eval_transformer without random flip
             if split == 'train':
                 ds = SDFDataset(path)
+                # from torch.utils.data importSubset
                 ds = Subset(ds, range(0, len(ds), params.dataset_skip_num))
                 dl = DataLoader(ds, batch_size=params.batch_size, shuffle=True,
                                         num_workers=params.num_workers,
