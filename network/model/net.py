@@ -10,19 +10,34 @@ class Tnet(nn.Module):
       super().__init__()
       self.k=k
 
-      self.conv1 = nn.Conv1d(k,64,1)
-      self.conv2 = nn.Conv1d(64,128,1)
-      self.conv3 = nn.Conv1d(128,1024,1)
+    #   self.conv1 = nn.Conv1d(k,64,1)
+    #   self.conv2 = nn.Conv1d(64,128,1)
+    #   self.conv3 = nn.Conv1d(128,1024,1)
 
-      self.fc1 = nn.Linear(1024,512)
-      self.fc2 = nn.Linear(512,256)
-      self.fc3 = nn.Linear(256,k*k)
+    #   self.fc1 = nn.Linear(1024,512)
+    #   self.fc2 = nn.Linear(512,256)
+    #   self.fc3 = nn.Linear(256,k*k)
 
-      self.bn1 = nn.BatchNorm1d(64)
-      self.bn2 = nn.BatchNorm1d(128)
-      self.bn3 = nn.BatchNorm1d(1024)
-      self.bn4 = nn.BatchNorm1d(512)
-      self.bn5 = nn.BatchNorm1d(256)
+    #   self.bn1 = nn.BatchNorm1d(64)
+    #   self.bn2 = nn.BatchNorm1d(128)
+    #   self.bn3 = nn.BatchNorm1d(1024)
+    #   self.bn4 = nn.BatchNorm1d(512)
+    #   self.bn5 = nn.BatchNorm1d(256)
+      SCALE=16
+      self.conv1 = nn.Conv1d(k,int(64/SCALE),1)
+      self.conv2 = nn.Conv1d(int(64/SCALE),int(128/SCALE),1)
+      self.conv3 = nn.Conv1d(int(128/SCALE),int(1024/SCALE),1)
+
+      self.fc1 = nn.Linear(int(1024/SCALE),int(512/SCALE))
+      self.fc2 = nn.Linear(int(512/SCALE),int(256/SCALE))
+      self.fc3 = nn.Linear(int(256/SCALE),k*k)
+
+      self.bn1 = nn.BatchNorm1d(int(64/SCALE))
+      self.bn2 = nn.BatchNorm1d(int(128/SCALE))
+      self.bn3 = nn.BatchNorm1d(int(1024/SCALE))
+      self.bn4 = nn.BatchNorm1d(int(512/SCALE))
+      self.bn5 = nn.BatchNorm1d(int(256/SCALE))
+      
        
 
    def forward(self, input):
@@ -48,15 +63,24 @@ class Transform(nn.Module):
    def __init__(self):
         super().__init__()
         self.input_transform = Tnet(k=2)
-        self.feature_transform = Tnet(k=64)
+        # self.feature_transform = Tnet(k=64)
 
-        self.conv1 = nn.Conv1d(2,64,1)
-        self.conv2 = nn.Conv1d(64,128,1)
-        self.conv3 = nn.Conv1d(128,1024,1)
+        # self.conv1 = nn.Conv1d(2,64,1)
+        # self.conv2 = nn.Conv1d(64,128,1)
+        # self.conv3 = nn.Conv1d(128,1024,1)
        
-        self.bn1 = nn.BatchNorm1d(64)
-        self.bn2 = nn.BatchNorm1d(128)
-        self.bn3 = nn.BatchNorm1d(1024)
+        # self.bn1 = nn.BatchNorm1d(64)
+        # self.bn2 = nn.BatchNorm1d(128)
+        # self.bn3 = nn.BatchNorm1d(1024)
+        SCALE=2
+        self.feature_transform = Tnet(k=int(64/SCALE))
+        self.conv1 = nn.Conv1d(2,int(64/SCALE),1)
+        self.conv2 = nn.Conv1d(int(64/SCALE),int(128/SCALE),1)
+        self.conv3 = nn.Conv1d(int(128/SCALE),int(1024/SCALE),1)
+       
+        self.bn1 = nn.BatchNorm1d(int(64/SCALE))
+        self.bn2 = nn.BatchNorm1d(int(128/SCALE))
+        self.bn3 = nn.BatchNorm1d(int(1024/SCALE))
        
    def forward(self, input):
         matrix2x2 = self.input_transform(input)
@@ -76,21 +100,33 @@ class Transform(nn.Module):
 
 
 class PointNet(nn.Module):
-    def __init__(self, classes = 1):
+    def __init__(self, classes = 1, input_num = 100):
         super().__init__()
+        self.input_num = input_num
         self.transform = Transform()
-        self.fc1 = nn.Linear(1024, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, classes)
+        # self.fc1 = nn.Linear(1024, 512)
+        # self.fc2 = nn.Linear(512, 256)
+        # self.fc3 = nn.Linear(256, classes)
         
 
-        self.bn1 = nn.BatchNorm1d(512)
-        self.bn2 = nn.BatchNorm1d(256)
-        self.dropout = nn.Dropout(p=0.3)
+        # self.bn1 = nn.BatchNorm1d(512)
+        # self.bn2 = nn.BatchNorm1d(256)
+
+        SCALE=2
+        self.fc1 = nn.Linear(int(1024/SCALE), int(512/SCALE))
+        self.fc2 = nn.Linear(int(512/SCALE), int(256/SCALE))
+        self.fc3 = nn.Linear(int(256/SCALE), classes)
+        
+
+        self.bn1 = nn.BatchNorm1d(int(512/SCALE))
+        self.bn2 = nn.BatchNorm1d(int(256/SCALE))
+
+
+        self.dropout = nn.Dropout(p=0)
         self.logsoftmax = nn.LogSoftmax(dim=1)
 
     def forward(self, x):
-        x = x.view(-1, 2, 101)
+        x = x.view(-1, 2, self.input_num)
         xb, matrix2x2, matrix64x64 = self.transform(x)
         xb = F.relu(self.bn1(self.fc1(xb)))
         xb = F.relu(self.bn2(self.dropout(self.fc2(xb))))
@@ -112,22 +148,12 @@ class Net(nn.Module):
         # Input has shape (101, 2)
         # 2 fully connected layers to transform the output of the convolution layers to the final output
         
-        self.conv1 = nn.Conv1d(2, 16, 3, padding=1)
-        self.conv2 = nn.Conv1d(16, 16, 3, padding=1)
+        classes=64
+        self.pointnet1 = PointNet(classes=64)
         
-        self.conv3 = nn.Conv1d(8, 8, 3, padding=1)
-        
-        self.fc1 = nn.Linear(100, 512)
-        self.fc2 = nn.Linear(512, 256)
-        self.fc3 = nn.Linear(256, 128)
-        self.fc4 = nn.Linear(128, 1)
-        
-        self.batch_norm1 = nn.BatchNorm1d(512)
-        self.batch_norm2 = nn.BatchNorm1d(512)
-        self.batch_norm3 = nn.BatchNorm1d(256)
-        self.batch_norm4 = nn.BatchNorm1d(128)
-        self.dropout_rate = params.dropout_rate
-        self.dropout_layer = nn.Dropout2d(p=self.dropout_rate)
+        self.fc1 = nn.Linear(classes+2+4, 1024)
+        self.fc2 = nn.Linear(1024, 512)
+        self.fc3 = nn.Linear(512, 1)
 
     def forward(self, s):
         """
@@ -141,22 +167,23 @@ class Net(nn.Module):
 
         Note: the dimensions after each step are provided
         """
-        s = s.view(-1, 2, 101)
+        scan_pts = s[:,:-1,:]
+        pt = s[:,-1,:]
+
+        pn_features, matrix2x2, matrix64x64 = self.pointnet1(scan_pts)
         
-        s = F.relu(self.conv1(s))
-        s = F.relu(self.conv2(s))
-        s = F.max_pool2d(s, 2)
-        
-        s = F.relu(self.conv3(s))
-        s = F.max_pool2d(s, 2)
-        s = s.view(-1, self.num_flat_features(s))
+        s = torch.cat([
+            matrix2x2.view(-1, 4),
+            pn_features,
+            pt
+            ],
+            dim=1)
 
         s = F.relu(self.fc1(s))
         s = F.relu(self.fc2(s))
-        s = F.relu(self.fc3(s))
-        s = self.fc4(s)
-        s = s.squeeze()
-        return s
+        s = self.fc3(s)
+        
+        return s, matrix2x2, matrix64x64
 
     def num_flat_features(self, x):
         size = x.size()[1:]  # all dimensions except the batch dimension
@@ -181,7 +208,13 @@ def pointnetloss(outputs, labels, m2x2, m64x64, alpha = 0.0001):
 
 def mae_loss(outputs, labels):
     num_examples = outputs.shape[0]
-    return np.sum(abs(outputs-labels))/num_examples
+    criterion = torch.nn.L1Loss()
+    return criterion(torch.Tensor(outputs), torch.Tensor(labels))
+
+
+def mse_loss(outputs, labels):
+    criterion = torch.nn.MSELoss()
+    return criterion(torch.Tensor(outputs), torch.Tensor(labels))
 
 
 def rmse_loss(outputs, labels):
@@ -195,7 +228,8 @@ def rmse_loss(outputs, labels):
 # maintain all metrics required in this dictionary- these are used in the training and evaluation loops
 metrics = {
     'rmse_loss': rmse_loss,
-    'mae_loss': mae_loss
+    'mae_loss': mae_loss,
+    'mse_loss': mse_loss
     # 'accuracy': accuracy,
     # could add more metrics such as accuracy for each token type
 }
