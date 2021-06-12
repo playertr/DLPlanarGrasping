@@ -24,7 +24,7 @@ parser.add_argument('--restore_file', default=None,
 global count
 count = 0
 
-def evaluate(model, loss_fn, dataloader, metrics, params):
+def evaluate(model, loss_fn, dataloader, metrics, params, log_msg):
     """Evaluate the model on `num_steps` batches.
 
     Args:
@@ -56,7 +56,9 @@ def evaluate(model, loss_fn, dataloader, metrics, params):
         data_batch, labels_batch = Variable(data_batch), Variable(labels_batch)
 
         # compute model output
-        output_batch = model(data_batch)
+        output_batch, m2x2, m64x64 = model(data_batch)
+        # loss = net.pointnetloss(output_batch, labels_batch, m2x2, m64x64)
+        labels_batch = labels_batch.view(-1, 1)
         loss = loss_fn(output_batch, labels_batch)
 
         # extract data from torch Variable, move to cpu, convert to numpy arrays
@@ -74,7 +76,7 @@ def evaluate(model, loss_fn, dataloader, metrics, params):
                                      for x in summ]) for metric in summ[0]}
     metrics_string = " ; ".join("{}: {:05.3f}".format(k, v)
                                 for k, v in metrics_mean.items())
-    logging.info("- Eval metrics : " + metrics_string)
+    logging.info(log_msg + metrics_string)
     return metrics_mean
 
 if __name__ == '__main__':
