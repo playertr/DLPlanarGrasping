@@ -23,7 +23,8 @@ class Tnet(nn.Module):
     #   self.bn3 = nn.BatchNorm1d(1024)
     #   self.bn4 = nn.BatchNorm1d(512)
     #   self.bn5 = nn.BatchNorm1d(256)
-      SCALE=16
+    #   SCALE=16
+      SCALE=32
       self.conv1 = nn.Conv1d(k,int(64/SCALE),1)
       self.conv2 = nn.Conv1d(int(64/SCALE),int(128/SCALE),1)
       self.conv3 = nn.Conv1d(int(128/SCALE),int(1024/SCALE),1)
@@ -72,7 +73,8 @@ class Transform(nn.Module):
         # self.bn1 = nn.BatchNorm1d(64)
         # self.bn2 = nn.BatchNorm1d(128)
         # self.bn3 = nn.BatchNorm1d(1024)
-        SCALE=2
+        # SCALE=2
+        SCALE=32
         self.feature_transform = Tnet(k=int(64/SCALE))
         self.conv1 = nn.Conv1d(2,int(64/SCALE),1)
         self.conv2 = nn.Conv1d(int(64/SCALE),int(128/SCALE),1)
@@ -112,7 +114,8 @@ class PointNet(nn.Module):
         # self.bn1 = nn.BatchNorm1d(512)
         # self.bn2 = nn.BatchNorm1d(256)
 
-        SCALE=2
+        # SCALE=2
+        SCALE=32
         self.fc1 = nn.Linear(int(1024/SCALE), int(512/SCALE))
         self.fc2 = nn.Linear(int(512/SCALE), int(256/SCALE))
         self.fc3 = nn.Linear(int(256/SCALE), classes)
