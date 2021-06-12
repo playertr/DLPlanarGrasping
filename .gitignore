@@ -10,3 +10,4 @@ notebooks/scratchwork/figs
 old/
 sdf_network/log/
 grasp_network/log
+*tfevents*
