@@ -1,6 +1,6 @@
 """
-grasp_quality.py
-Module for computing force closure and the Ferrari-Canny metric on polygons, useful for 2D planar grasp synthesis.
+grasp_quality.py Module for computing force closure and the Ferrari-Canny metric
+on polygons, useful for 2D planar grasp synthesis.
 
 Tim Player, playert@oregonstate.edu, May 2021
 
@@ -21,71 +21,84 @@ from data_generation.utils import plot_shape
 import matplotlib.pyplot as plt
 
 def shape_grasp_quality(shape, theta, b, mu=1.):
-    """Get the quality of the grasp on the shape with gripper angle parallel to a ray emitting from the origin with angle `theta`, and linear offset `b` to the left.
+    """Get the quality of the grasp on the shape with gripper angle parallel to
+    a ray emitting from the origin with angle `theta`, and linear offset `b` to
+    the left.
 
-    This function is the primary entry point to the grasp quality Python module. I used this function to create ground truth grasp quality labels for the deep learning assignment this git repo was made for.
+    This function is the primary entry point to the grasp quality Python module.
+    I used this function to create ground truth grasp quality labels for the
+    deep learning assignment this git repo was made for.
 
-    Args:
-        shape (shapely.Polygon): shape to grasp
-        theta (float): angle of the gripper axis
-        b (float): smallest distance from the gripper axis to the origin
-        mu (float, optional): Friction coefficient. Defaults to 1.
+    Args: shape (shapely.Polygon): shape to grasp theta (float): angle of the
+        gripper axis b (float): smallest distance from the gripper axis to the
+        origin mu (float, optional): Friction coefficient. Defaults to 1.
 
-    Raises:
-        ValueError: error if the line does not intersect shape
-        QhullError: error if the line intersects shape in a way that results in a deficient geometry, which sometimes happens when the line passes through two adjacent vertices.
+    Raises: ValueError: error if the line does not intersect shape QhullError:
+        error if the line intersects shape in a way that results in a deficient
+        geometry, which sometimes happens when the line passes through two
+        adjacent vertices.
 
-    Returns:
-        float: Ferrari-Canny grasp metric, the magnitude of the the smallest possible wrench that would escape the gripper, assuming a total contact force across all contacts of 1 unit.
+    Returns: float: Ferrari-Canny grasp metric, the magnitude of the the
+        smallest possible wrench that would escape the gripper, assuming a total
+        contact force across all contacts of 1 unit.
     """
     
-    # Determine the intersection points of the line with parameters (theta, b) and the given shape.
+    # Determine the intersection points of the line with parameters (theta, b)
+    # and the given shape.
     int_pts = intersection_points(shape, theta, b)
 
     # If the line misses the shape entirely, throw an error.
     if len(int_pts)==0: 
         raise ValueError("Line does not intersect shape.")
 
-    # For each intersection point, find the two vertices (a tuple) within the Polygon that form the line segment containing the point.
+    # For each intersection point, find the two vertices (a tuple) within the
+    # Polygon that form the line segment containing the point.
     vert_pairs = [vertices_from_point(shape, p) for p in int_pts]
 
-    # Use these two vertices to determine the outward-facing normal vector of the object at the intersection point (useful for grasp synthesis).
+    # Use these two vertices to determine the outward-facing normal vector of
+    # the object at the intersection point (useful for grasp synthesis).
     normals = [normal_from_vertices(vert_pair) for vert_pair in vert_pairs]
 
     forces = list(normals)  # assume that the forces ARE the unit normals
     points = list(int_pts)  # the forces are applied at the intersection points
     friction_coeffs = [mu, mu] # both grippers have the same frction
 
-    # Compute the Ferrari-Canny metric given this set of force vectors, force locations, and friction coefficients.
+    # Compute the Ferrari-Canny metric given this set of force vectors, force
+    # locations, and friction coefficients.
     return grasp_quality(forces, points, friction_coeffs)
 
 def intersection_points(shape, theta, b, t=100.0):
     """Return intersection of shape with line of angle `theta`, offset `b`
 
-    Args:
-        shape (shapely.geometry.Polygon): the shape to grasp (centered at origin)
-        theta (float): gripper axis angle in radians CCW from x-axis
-        b (float): minimum distance from origin to line passing through gripper fingers
-        t (float, optional): Parameter for how long the line determining intersection should be. This line should be very long. Defaults to 100.
+    Args: shape (shapely.geometry.Polygon): the shape to grasp (centered at
+        origin) theta (float): gripper axis angle in radians CCW from x-axis b
+        (float): minimum distance from origin to line passing through gripper
+        fingers t (float, optional): Parameter for how long the line determining
+        intersection should be. This line should be very long. Defaults to 100.
 
-    Returns:
-        np.ndarray: (2,2) matrix of intersection points, where each row is a 2D intersection point.
+    Returns: np.ndarray: (2,2) matrix of intersection points, where each row is
+        a 2D intersection point.
     """
 
-    # Construct the endpoints of an extremely long line passing through the gripper fingers.
+    # Construct the endpoints of an extremely long line passing through the
+    # gripper fingers.
     left, right = line_endpoints(theta, b, t)
 
-    # Create a Shapely line object with those endpoints.
-    # Shapely doesn't have a convenient class for a single line, so instead I use a LineString object.
+    # Create a Shapely line object with those endpoints. Shapely doesn't have a
+    # convenient class for a single line, so instead I use a LineString object.
     line = LineString([
         (left[0], left[1]),
         (right[0], right[1])
     ])
 
-    # Determine the (hopefully) two points where the gripper line intersects the Polygon.
+    # Determine the (hopefully) two points where the gripper line intersects the
+    # Polygon.
     intersection = shape.intersection(line)
 
-    # Sometimes, the gripper line intersects at more than two points, like if the polygon is U-shaped. In this case, the `intersection` function returns a MultiLineString. From experimenting, I found that the following operations would return the outermost contact points.
+    # Sometimes, the gripper line intersects at more than two points, like if
+    # the polygon is U-shaped. In this case, the `intersection` function returns
+    # a MultiLineString. From experimenting, I found that the following
+    # operations would return the outermost contact points.
     if type(intersection) == MultiLineString:
         segment1 = np.array(intersection[0])[0] # First contact point of first intersecting line
         segment2 = np.array(intersection[-1])[1] # Last contact point of last intersecting line
@@ -95,15 +108,15 @@ def intersection_points(shape, theta, b, t=100.0):
     return np.array(shape.intersection(line))
 
 def line_endpoints(theta, b, t=100):
-    """Find endpoints of line parallel to a ray angle theta, with offset `b` to the left of the ray.
+    """Find endpoints of line parallel to a ray angle theta, with offset `b` to
+    the left of the ray.
 
-    Args:
-        theta (float): gripper axis angle in radians CCW from x-axis
-        b (float): minimum distance from origin to line passing through gripper fingers
-        t (float, optional): Parameter for how long the line determining intersection should be. This line should be very long. Defaults to 100.
+    Args: theta (float): gripper axis angle in radians CCW from x-axis b
+        (float): minimum distance from origin to line passing through gripper
+        fingers t (float, optional): Parameter for how long the line determining
+        intersection should be. This line should be very long. Defaults to 100.
 
-    Returns:
-        tuple: tuple of ndarrays for endpoints
+    Returns: tuple: tuple of ndarrays for endpoints
     """
     x0 = b * np.array([-np.sin(theta), np.cos(theta)])
     along = np.array([np.cos(theta), np.sin(theta)])
@@ -112,12 +125,10 @@ def line_endpoints(theta, b, t=100):
 def vertices_from_point(polygon, point):
     """Return which two polygon vertices form an edge containing this point.
 
-    Args:
-        polygon (shapely.geometry.Polygon): object to grasp
-        point (np.ndarray): point along line
+    Args: polygon (shapely.geometry.Polygon): object to grasp point
+        (np.ndarray): point along line
 
-    Returns:
-        np.ndarray: (2,2) ndarray of points
+    Returns: np.ndarray: (2,2) ndarray of points
     """
     pt = Point(point)   # convert to shapely.geometry.Point
     polin = LineString(list(polygon.exterior.coords)) # create a string of line segments from the Polygon coordinates
@@ -127,21 +138,21 @@ def vertices_from_point(polygon, point):
     # For each pair of neighboring points in the list of vertices ...
     for i,j in zip(points, points[1:]):
 
-        # Find the pair of vertices whose line segment contains the point of interest.
+        # Find the pair of vertices whose line segment contains the point of
+        # interest.
         if LineString((i,j)).distance(pt) < 1e-8:
             return np.array([i, j])
 
 def normal_from_vertices(point_pair):
-    """Return slope of inward normal vector given two (consecutive, clockwise) points from origin
+    """Return slope of inward normal vector given two (consecutive, clockwise)
+    points from origin
 
-    Args:
-        point_pair (np.ndarray): (2,2) array of points
+    Args: point_pair (np.ndarray): (2,2) array of points
 
-    Returns:
-        np.ndarray: inward-facing normal vector
+    Returns: np.ndarray: inward-facing normal vector
     """
-    # I drew this out on graph paper and it looked like it got the correct normal vector.
-    # Polygon vertices must be defined in a consistent order.
+    # I drew this out on graph paper and it looked like it got the correct
+    # normal vector. Polygon vertices must be defined in a consistent order.
     delta_y = point_pair[1,1] - point_pair[0,1]
     delta_x = point_pair[1,0] - point_pair[0,0]
     normal = np.array([-delta_y, delta_x])
@@ -149,20 +160,19 @@ def normal_from_vertices(point_pair):
     return normal / np.linalg.norm(normal)
 
 def grasp_quality(forces, points, friction_coeffs):
-    """Get grasp quality via Ferrari Canny metric, accepting point locations, forces, and friction coefficients as input.
+    """Get grasp quality via Ferrari Canny metric, accepting point locations,
+    forces, and friction coefficients as input.
 
-    The Ferrari-Canny metric is the radius of the smallest sphere that contacts the convex hull of the unit wrench space under a pyramidal approximation.
+    The Ferrari-Canny metric is the radius of the smallest sphere that contacts
+    the convex hull of the unit wrench space under a pyramidal approximation.
 
-    Args:
-        forces (list]): list of 2-dimensional ndarrays [fx, fy]
-        points (list): list of 2-dimensional ndarrays [x, y]
-        friction_coeffs (list): list of floats [mu_1, mu_2]
+    Args: forces (list]): list of 2-dimensional ndarrays [fx, fy] points (list):
+        list of 2-dimensional ndarrays [x, y] friction_coeffs (list): list of
+        floats [mu_1, mu_2]
 
-    Raises:
-        ValueError: error if force is not 2D.
+    Raises: ValueError: error if force is not 2D.
 
-    Returns:
-        float: Ferrari-Canny metric
+    Returns: float: Ferrari-Canny metric
     """
     if len(forces[0]) != 2: # Dimension of wrench space
         raise ValueError("Force must be 2D")
@@ -170,10 +180,12 @@ def grasp_quality(forces, points, friction_coeffs):
     # Construct the grasp space
     F = wrench_basis(forces, points, friction_coeffs)
 
-    # Determine the distance of the origin from the convex hull of the wrench space.
+    # Determine the distance of the origin from the convex hull of the wrench
+    # space.
     distance = ferrari_canny(F)
 
-    # Because the origin is within the convex hull of the wrench space, the returned distance is negative. Oops.
+    # Because the origin is within the convex hull of the wrench space, the
+    # returned distance is negative. Oops.
     quality = -1*distance
 
     return quality
@@ -181,13 +193,12 @@ def grasp_quality(forces, points, friction_coeffs):
 def wrench_basis(forces, points, friction_coeffs):
     """Construct F, a 3xM matrix of friction cone wrenches.
 
-    Args:
-        forces (list]): list of 2-dimensional ndarrays [fx, fy]
-        points (list): list of 2-dimensional ndarrays [x, y]
-        friction_coeffs (list): list of floats [mu_1, mu_2]
+    Args: forces (list]): list of 2-dimensional ndarrays [fx, fy] points (list):
+        list of 2-dimensional ndarrays [x, y] friction_coeffs (list): list of
+        floats [mu_1, mu_2]
 
-    Returns:
-        np.ndarray: (3,N) array of wrenches [x, y, tau]^T, where N is the length of the input lists.
+    Returns: np.ndarray: (3,N) array of wrenches [x, y, tau]^T, where N is the
+        length of the input lists.
     """
 
     F = []
@@ -209,12 +220,10 @@ def cone_edges(f, mu):
     In the case where the friction coefficient is 0, a list containing only the
     original contact force is returned.
 
-    Args:
-        f - 2D contact force.
-        mu - friction coefficient.
+    Args: f - 2D contact force. mu - friction coefficient.
 
-    Return:
-        edges - a list of forces whose convex hull approximates the friction cone.
+    Return: edges - a list of forces whose convex hull approximates the friction
+        cone.
     """
     # Edge case for frictionless contact
     if mu == 0.:
@@ -239,12 +248,9 @@ def wrench(f, p):
     """
     Computes the wrench from the given force f applied at the given point p.
 
-    Args:
-        f - 2D contact force.
-        p - 2D contact point.
+    Args: f - 2D contact force. p - 2D contact point.
 
-    Return:
-        w - 3D contact wrench represented as (force, torque).
+    Return: w - 3D contact wrench represented as (force, torque).
     """
     w = np.concatenate([
         f,
@@ -255,8 +261,8 @@ def wrench(f, p):
 def cross_matrix(x):
     """
     Returns a matrix x_cross such that x_cross.dot(y) represents the cross
-    product between x and y.
-    Defined only on 2D vectors, x_cross is a 2x1 vector representing the magnitude of the cross product in the z direction.
+    product between x and y. Defined only on 2D vectors, x_cross is a 2x1 vector
+    representing the magnitude of the cross product in the z direction.
     """
     D = x.shape[0]
     if D == 2:
@@ -265,14 +271,13 @@ def cross_matrix(x):
 
 def ferrari_canny(F):
     """Returns the Ferrari Canny metric of a set of wrenches F.
-    
-    The Ferrari Canny metric is the signed magnitude of the smallest wrench that extends from the origin to the convex hull of the wrenches in the matrix F.
 
-    Args:
-        F (ndarray): 3xM matrix of wrenches
+    The Ferrari Canny metric is the signed magnitude of the smallest wrench that
+    extends from the origin to the convex hull of the wrenches in the matrix F.
 
-    Returns:
-        float: distance from origin to hull.
+    Args: F (ndarray): 3xM matrix of wrenches
+
+    Returns: float: distance from origin to hull.
     """
     hull = ConvexHull(F.T)
     origin = np.array([0,0,0])
@@ -281,15 +286,13 @@ def ferrari_canny(F):
 def dist(hull, point):
     """Return L2 distance from a point to a convex hull.
 
-    Args:
-        hull (scipy.spatial.ConvexHull): Convex Hull object
-        point (np.ndarray): point in R^3
+    Args: hull (scipy.spatial.ConvexHull): Convex Hull object point
+        (np.ndarray): point in R^3
 
-    Returns:
-        float: distance
+    Returns: float: distance
     """
-    # Construct PyGEL Manifold from the convex hull
-    # NB! It was hard to compile PyGel. See the directions in the README.
+    # Construct PyGEL Manifold from the convex hull NB! It was hard to compile
+    # PyGel. See the directions in the README.
     m = hmesh.Manifold()
     for s in hull.simplices:
         m.add_face(hull.points[s])
@@ -316,14 +319,12 @@ def dist(hull, point):
 
 def form_closure_program(F):
     """
-    Solves a linear program to determine whether the given contact wrenches
-    are in form closure.
+    Solves a linear program to determine whether the given contact wrenches are
+    in form closure.
 
-    Args:
-        F - matrix whose columns are 3D contact wrenches.
+    Args: F - matrix whose columns are 3D contact wrenches.
 
-    Return:
-        True/False - whether the form closure condition is satisfied.
+    Return: True/False - whether the form closure condition is satisfied.
     """
     if np.linalg.matrix_rank(F) < F.shape[0]:   # deficient -> not form closure
         return False
@@ -339,13 +340,13 @@ def form_closure_program(F):
 
 def is_in_force_closure(F):
     """
-    Calls form_closure_program() to determine whether the wrenches are in force closure.
+    Calls form_closure_program() to determine whether the wrenches are in force
+    closure.
 
-    Args:
-        F - matrix whose columns are 3D contact wrenches from friction cone pyramidal approximation.
+    Args: F - matrix whose columns are 3D contact wrenches from friction cone
+        pyramidal approximation.
 
-    Return:
-        True/False - whether the forces are in force closure.
+    Return: True/False - whether the forces are in force closure.
     """
     return form_closure_program(F)
 
@@ -354,7 +355,8 @@ def is_in_force_closure(F):
 ################################################################################
 
 def plot_grasp(shape, theta, b, mu=1):
-    """Make two subplots: contact points on the polygon, and grasp wrench hull with smallest ball."""
+    """Make two subplots: contact points on the polygon, and grasp wrench hull
+    with smallest ball."""
 
     int_pts = intersection_points(shape, theta, b)
     vert_pairs = [vertices_from_point(shape, p) for p in int_pts]
@@ -376,7 +378,8 @@ def plot_grasp(shape, theta, b, mu=1):
     plt.tight_layout()
 
 def plot_friction_cones(shape, theta, b, ax, mu=1):
-    """Plot the shape, with the contacts and friction cones resulting from a grasp with angle `theta` and offset `b`."""
+    """Plot the shape, with the contacts and friction cones resulting from a
+    grasp with angle `theta` and offset `b`."""
     int_pts = intersection_points(shape, theta, b)
     vert_pairs = [vertices_from_point(shape, p) for p in int_pts]
     normals = [normal_from_vertices(vert_pair) for vert_pair in vert_pairs]
